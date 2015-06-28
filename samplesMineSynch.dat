@@ -1,0 +1,20 @@
+############################################################################################
+GENERAL
+Path             ///home/hbakhshi/Desktop/SingleTop/
+#__________________________________________________________________________________________
+# list of samples
+#
+## -------- Signal --------
+
+SAMPLE
+Name            Signal1
+SName           tChannel
+ShapeName       Signal
+File            TTChannel_Synch7.root
+Xsection        44.07048
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents         3991000
+

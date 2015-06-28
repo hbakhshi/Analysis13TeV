@@ -1,0 +1,183 @@
+############################################################################################
+GENERAL
+Path             ///home/hbakhshi/Desktop/SingleTop/
+#__________________________________________________________________________________________
+# list of samples
+#
+## -------- Signal --------
+
+SAMPLE
+Name            Signal
+SName           tChannel
+ShapeName       Signal
+File            TTChannel_1.root
+Xsection        44.07048
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents         3991000
+
+SAMPLE
+Name            Signal2
+SName           tChannel
+ShapeName       Signal
+File            TBarTChannel_1.root
+Xsection        26.2278
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents		1999800	
+
+# -------- QCD --------
+SAMPLE
+Name		QCDMuEnriched
+SName		QCD
+ShapeName	QCD
+File            QCDMuEnriched_1.root
+Xsection  	381304
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		4777926
+
+
+# -------- electroweak --------
+SAMPLE
+Name		WJetsHT100
+SName		VJets
+ShapeName	WJets
+File            WJets100_1.root
+Xsection  	1817
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		5262265
+
+SAMPLE
+Name		WJetsHT200
+SName		VJets
+ShapeName	WJets
+File            WJets200_1.root
+Xsection  	471.6
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		4936077
+
+SAMPLE
+Name		WJetsHT400
+SName		VJets
+ShapeName	WJets
+File            WJets400_1.root
+Xsection  	55.61
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		4640594
+
+SAMPLE
+Name		WJetsHT600
+SName		VJets
+ShapeName	WJets
+File            WJets600_1.root
+Xsection  	18.81
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		4581841
+
+
+
+SAMPLE
+Name		DYHT100
+SName		VJets
+ShapeName	DY
+File            DY100_1.root
+Xsection  	194.3
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		419
+NEvents		4054159
+
+SAMPLE
+Name		DYHT200
+SName		VJets
+ShapeName	DY
+File            DY200_1.root
+Xsection  	52.24
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		419
+NEvents		4666496
+
+SAMPLE
+Name		DYHT400
+SName		VJets
+ShapeName	DY
+File		DY400_1.root
+Xsection  	6.546
+Kfact		1.
+Lumi		1000
+Type		mc
+Color		419
+NEvents		4931372
+
+SAMPLE
+Name		DYHT600
+SName		VJets
+ShapeName	DY
+File            DY600_1.root
+Xsection  	2.179
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		419
+NEvents		4122844
+
+
+
+SAMPLE
+Name		SingleTop_tW
+SName		Top
+ShapeName	Top
+File            TTWChannel_1.root
+Xsection  	35.6
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		986100
+
+
+SAMPLE
+Name		SingleTopbar_tW
+SName		Top
+ShapeName	Top
+File            TBarTWChannel_1.root
+Xsection  	35.6
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		971800
+
+SAMPLE
+Name		TTJets
+SName		Top
+ShapeName	Top
+File            TTJets2_1.root
+Xsection  	831.76
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		25446993
