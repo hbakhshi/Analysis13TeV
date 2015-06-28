@@ -1,6 +1,6 @@
 ############################################################################################
 GENERAL
-Path             ///home/hbakhshi/Desktop/SingleTop/
+Path             ///dataLOCAL/TChannelEA2015/Phys14Data/
 #__________________________________________________________________________________________
 # list of samples
 #
@@ -125,7 +125,7 @@ SAMPLE
 Name		TTJets
 SName		ttbar
 ShapeName	Top
-File            ttbar_all.root
+File            ttbar_*.root
 Xsection  	831.76
 Kfact           1.	
 Lumi            1000
