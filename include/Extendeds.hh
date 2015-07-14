@@ -112,7 +112,7 @@ public:
   virtual void Fill(double w = 1.0);
 
   virtual void Fill(double dVal , double w , std::map<TString , double> WSyst );
-  virtual void Fill(double dVal , double w , bool isPSeudoData );
+  virtual void Fill(double dVal , double w , bool isPSeudoData , bool iso = true );
 
   void AddOverAndUnderFlow(TH1 * Histo, bool overflow, bool underflow);
 
@@ -162,6 +162,8 @@ public:
   std::vector<TString> histoNames;
   std::map<TString , TH1*> allHistos;
   std::map<TString , TH1*> allSignedHistos;
+
+  double nISOQCD;
 
   void ScaleData( TEfficiency* eff );
 protected:

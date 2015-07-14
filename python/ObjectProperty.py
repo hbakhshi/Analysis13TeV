@@ -226,22 +226,34 @@ class Draw:
 
 # SingleTop part
 # cutflow table
-f = TFile.Open("../MassPlots/2j1t_correctws_syncedFull3.root")
-dir = f.GetDirectory("cutflowtable") 
-cutflowtable = ObjectProperty( dir , "tChannel" , ["SUSY"] )
-cutflowtable.PrintCutFlowTable()
+# f = TFile.Open("../MassPlots/2j1t_correctws_syncedFull3.root")
+# dir = f.GetDirectory("cutflowtable") 
+# cutflowtable = ObjectProperty( dir , "tChannel" , ["SUSY"] )
+# cutflowtable.PrintCutFlowTable()
 
-dirw1 = f.GetDirectory("cutflowtablew1") 
-cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
-cutflowtablew1.PrintCutFlowTable()
-exit()
+# dirw1 = f.GetDirectory("cutflowtablew1") 
+# cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
+# cutflowtablew1.PrintCutFlowTable()
+# exit()
 
 # Wjets extraction
-f = TFile.Open("../MassPlots/2j1t_correctws_syncedFull.root")
+#f = TFile.Open("./MassPlots/2j1t_correctws_syncedFull2.root")
+f = TFile.Open("./MassPlots/2j1t_PPApp.root")
 dir1 = f.GetDirectory("jPrimeEta" )
 jPrimeEta = ObjectProperty( dir1 , "WJets" , ["SUSY","tChannel_N","tChannel_P","tbarChannel_N","tbarChannel_P","tS_N", "tS_P", "tbarS_N","tbarS_P"] )
 dir2 = f.GetDirectory("jPrimeEtaSB" )
 jPrimeEtaSB = ObjectProperty( dir2 ,"WJets" , ["SUSY","tChannel_N","tChannel_P","tbarChannel_N","tbarChannel_P","tS_N", "tS_P", "tbarS_N","tbarS_P"] )
+
+# fqcd = TFile.Open( "/home/hbakhshi/Desktop/ThisMonth/SingleTop/PrePreApproval/qcd.root" )
+# hQCD = fqcd.Get("QCDEtaJ")
+# hQCD.Rebin( 2 )
+# hQCD.Scale( jPrimeEtaSB.QCD.Integral() / hQCD.Integral() )
+# jPrimeEtaSB.QCD = hQCD
+
+fqcd = TFile.Open( "/home/hbakhshi/Documents/Physics/Analysis13TeV/MassPlots/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8_absetajetprime_SB_2j1t.root" )
+hQCD = fqcd.Get("abs_eta_other_Je")
+jPrimeEtaSB.QCD = hQCD
+
 jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
 jPrimeDD_SB.Scale( jPrimeEta.Signal.Integral()/jPrimeDD_SB.Integral() )
 a = Draw( jPrimeDD_SB )

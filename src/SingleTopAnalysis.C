@@ -20,6 +20,7 @@
 
 #include "BaseMassPlotter.hh"
 #include "SingleTopTree.h"
+#include "DMTopVariables.h"
 #include <cmath>
 
 #include "TRandom.h"
@@ -52,6 +53,8 @@ public:
 };
 
 void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,TString myfileName ){
+
+  TopUtilities topUtils ;
 
   int lumi = 0;
 
@@ -157,7 +160,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       nextcut.Reset();
       double weight = Weight;
 
-      if( Sample.name == "Signal" || Sample.sname == "tS" || Sample.sname == "tbarS"  ){
+      if( Sample.name == "Signal" || Sample.sname == "sChannel" || Sample.sname == "tbarS"  ){
 	//cout << "SIGNAL" << endl;
 	weight *= fTree.Event_LHEWeightSign ;
 	// if(fTree.Event_LHEWeightSign < 0.0)
@@ -198,6 +201,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
       //cout << "nMuons : " << fTree.muons_size << endl;
       int tightMuIndex =-1;
+      int nonTightMuIndex = -1;
       int nLooseMuos   = 0;
       int nTightMuons = 0;
       int nTightNonIsoMuons = 0;
@@ -212,8 +216,11 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	    nTightMuons ++;
 	    if( tightMuIndex == -1 )
 	      tightMuIndex = imu;
-	  }else
+	  }else{
 	    nTightNonIsoMuons ++;
+	    if( nonTightMuIndex == -1 )
+	      nonTightMuIndex = imu;
+	  }
 	}
 
 	if( ! isTight )
@@ -225,19 +232,32 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  }
       }      
 
-      if( nTightMuons != 1 )
-      	continue;
+      if( Sample.sname != "QCD" )
+	if( nTightMuons != 1 )
+	  continue;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
 
-      if( nTightNonIsoMuons != 0 )
-      	continue;
+      if( Sample.sname != "QCD" )
+	if( nTightNonIsoMuons != 0 )
+	  continue;
 
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
 
+      bool isiso = true;
+      if(Sample.sname == "QCD"){
+	if( nTightMuons == 0 && nTightNonIsoMuons == 1){
+	  isiso = false;
+	  tightMuIndex = nonTightMuIndex ;
+	}
+	else if ( nTightMuons == 1 && nTightNonIsoMuons == 0)
+	  isiso = true;
+	else
+	  continue;
+      }
 
       if( nLooseMuos > 0 )
       	continue;
@@ -264,9 +284,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
       int j1index = -1;
       int j2index = -1;
+      int j3index = -1;
       int nJets = 0 ;
       int howManyBJets = 0;
       int bjIndex = -1;
+      int bj2Index = -1;
+      int jprimeIndex ; 
       for( int jid = 0 ; jid < fTree.jetsAK4_size ; jid++ ){
       	if( fTree.jetsAK4_Pt[jid] > 40 &&
 	    fabs( fTree.jetsAK4_Eta[jid] ) < 4.7 &&
@@ -277,15 +300,21 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	    j1index = jid ;
 	  else if(nJets == 2 )
 	    j2index = jid ;
+	  else if( nJets == 3 )
+	    j3index = jid ;
 
 	  if( fTree.jetsAK4_CSV[jid] > 0.941  && fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
 	    howManyBJets ++;
-	    bjIndex = jid ;
-	  }
+	    if(howManyBJets==1)
+	      bjIndex = jid ;
+	    else if(howManyBJets==2)
+	      bj2Index = jid ;
+	  }else
+	    jprimeIndex = jid ;
 	}
       }
       
-      nJetsBeforeCut.Fill( nJets , weight , EventsIsPSeudoData < fabs(weight) );
+      nJetsBeforeCut.Fill( nJets , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       if (nJets != NUMBEROFJETS)
 	continue;
 
@@ -293,7 +322,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
       
-      nbJets.Fill( howManyBJets , weight , EventsIsPSeudoData < fabs(weight) );
+      nbJets.Fill( howManyBJets , weight , EventsIsPSeudoData < fabs(weight) , isiso);
       if( howManyBJets != NUMBEROFBJETS )
 	continue;
 
@@ -303,7 +332,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
      
       double MT = sqrt( 2*fTree.met_Pt* fTree.muons_Pt[tightMuIndex]*(1-TMath::Cos( Util::DeltaPhi(fTree.met_Phi , fTree.muons_Phi[tightMuIndex]) ) )  ) ;
-      MTBeforeCut.Fill( MT , weight , EventsIsPSeudoData < fabs(weight) );
+      MTBeforeCut.Fill( MT , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       if( MT < 50 )
 	continue;
       
@@ -311,29 +340,34 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
 
-      int jprimeIndex = (bjIndex == j1index) ? j2index : j1index ;
-      TopMass.Fill( fTree.resolvedTopSemiLep_Mass[0] , weight , EventsIsPSeudoData < fabs(weight) );
+      //int jprimeIndex = (bjIndex == j1index) ? j2index : j1index ;
+      TLorentzVector muLV;
+      muLV.SetPtEtaPhiE( fTree.muons_Pt[tightMuIndex] , fTree.muons_Eta[tightMuIndex] , fTree.muons_Phi[ tightMuIndex ] , fTree.muons_E[tightMuIndex] );
+      TLorentzVector bjetLV;
+      bjetLV.SetPtEtaPhiE( fTree.jetsAK4_Pt[ bjIndex ] , fTree.jetsAK4_Eta[ bjIndex ] , fTree.jetsAK4_Phi[ bjIndex ] , fTree.jetsAK4_E[ bjIndex ] ) ; 
+      double topMass = topUtils.top4Momentum( muLV , bjetLV , fTree.met_Px , fTree.met_Py ).mass();
+      TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
-      if( 130 < fTree.resolvedTopSemiLep_Mass[0] && fTree.resolvedTopSemiLep_Mass[0] < 225 ){
-	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight));
-	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) );
-	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) );
-	muEtaOneB.Fill( fabs(fTree.muons_Eta[tightMuIndex]) , weight , EventsIsPSeudoData < fabs(weight) );
-	METOneB.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) );
-	bPtOneB.Fill( fTree.jetsAK4_Pt[bjIndex] , weight , EventsIsPSeudoData < fabs(weight) );
-	bEtaOneB.Fill(fabs( fTree.jetsAK4_Eta[bjIndex] ) , weight , EventsIsPSeudoData < fabs(weight) );
+      if( 130. < topMass && topMass < 225. ){
+	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	muEtaOneB.Fill( fabs(fTree.muons_Eta[tightMuIndex]) , weight , EventsIsPSeudoData < fabs(weight), isiso );
+	METOneB.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	bPtOneB.Fill( fTree.jetsAK4_Pt[bjIndex] , weight , EventsIsPSeudoData < fabs(weight), isiso );
+	bEtaOneB.Fill(fabs( fTree.jetsAK4_Eta[bjIndex] ) , weight , EventsIsPSeudoData < fabs(weight), isiso );
 
 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
 	cutindex++;
       }else{
-	jprimeEtaSB.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) );
+	jprimeEtaSB.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       }
 
       if(Sample.name == "Signal" )
-	hTopMass->Fill( fTree.resolvedTopSemiLep_Mass[0] , weight );
+	hTopMass->Fill( topMass , weight );
       if(Sample.name == "WJets")
-	hTopMassEtaJ->Fill( fTree.resolvedTopSemiLep_Mass[0] ,fabs( fTree.jetsAK4_Eta[jprimeIndex] )  );
+	hTopMassEtaJ->Fill( topMass ,fabs( fTree.jetsAK4_Eta[jprimeIndex] )  );
     }
     
   }
@@ -361,7 +395,7 @@ int main(int argc, char* argv[]) {
   TString execname = TString(argv[0]);
   // Default options
   TString outputfile = "EleTau_Signal_METBJetsCuts"; 
-  TString outputdir = "../MassPlots/";
+  TString outputdir = "./MassPlots/";
   TString samples = "./samples/samplesMineTauPlusX.dat";
   TString channel = "etau";
   Long64_t neventperfile = LONG_MAX;

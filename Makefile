@@ -1,6 +1,6 @@
 ROOTCFLAGS     = $(shell root-config --cflags)
 ROOTLIBS       = $(shell root-config --libs)
-ROOTGLIBS      = $(shell root-config --glibs)
+ROOTGLIBS      = $(shell root-config --glibs) 
 
 INCLUDES       = -I./include 
 
@@ -14,7 +14,7 @@ LDFLAGS        =
 SOFLAGS        = -O -shared  -fPIC #-flat_namespace 
 LIBS           = $(ROOTLIBS) 
 
-GLIBS         = $(ROOTGLIBS) -lMinuit -lMinuit2 -lTreePlayer
+GLIBS         = $(ROOTGLIBS) -lMinuit -lMinuit2 -lTreePlayer -lGenVector
 
 SRCS =  src/Extendeds.cc src/BaseMassPlotter.cc src/SingleTopTree.C
 OBJS =  $(patsubst %.C,%.o,$(SRCS:.cc=.o))

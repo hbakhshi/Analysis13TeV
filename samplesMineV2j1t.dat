@@ -1,0 +1,135 @@
+############################################################################################
+GENERAL
+Path             ///home/hbakhshi/Desktop/SingleTop/
+#__________________________________________________________________________________________
+# list of samples
+#
+## -------- Signal --------
+
+SAMPLE
+Name            Signal
+SName           tChannel
+ShapeName       Signal
+File            tchannel_t_1.root
+Xsection        44.07048
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents         823298
+
+SAMPLE
+Name            Signal
+SName           tChannel
+ShapeName       Signal
+File            tchannel_tbar_1.root
+Xsection        26.2278
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents		426262
+
+# -------- QCD --------
+SAMPLE
+Name		QCDMuEnriched
+SName		QCD
+ShapeName	QCD
+File            qcd_1.root
+Xsection  	381304
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		4777926
+
+
+# -------- electroweak --------
+SAMPLE
+Name		WJets
+SName		WJets
+ShapeName	WJets
+File            w_1.root
+Xsection  	104595.4
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		417
+NEvents		10017462
+
+SAMPLE
+Name		DYJets
+SName		DY
+ShapeName	DY
+File            dy_1.root
+Xsection  	10242.8
+Kfact           1.
+Lumi            1000
+Type            mc
+Color		419
+NEvents		2829164
+
+
+SAMPLE
+Name		SingleTop_tW
+SName		tW
+ShapeName	Top
+File            twchannel_t_1.root
+Xsection  	35.6
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		986100
+
+
+SAMPLE
+Name		SingleTopbar_tW
+SName		tW
+ShapeName	Top
+File            twchannel_tbar_1.root
+Xsection  	35.6
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		971800
+
+SAMPLE
+Name		SingleTop_s
+SName		sChannel
+ShapeName	Top
+File            schannel_t_1.root
+Xsection  	2.32
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		299296
+
+
+SAMPLE
+Name		SingleTopbar_s
+SName		sChannel
+ShapeName	Top
+File            schannel_tbar_1.root
+Xsection  	1.36
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		148794
+
+
+SAMPLE
+Name		TTJets
+SName		ttbar
+ShapeName	Top
+File            ttbar_all.root
+Xsection  	831.76
+Kfact           1.	
+Lumi            1000
+Type            mc
+Color		600
+NEvents		25446993
+

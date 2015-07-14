@@ -2,6 +2,7 @@
 #include "Extendeds.hh"
 #include <vector>
 #include <string.h>
+#include "TRandom.h"
 
 void ExtendedObjectProperty::makeCard(double N, double S, double dS, double B, double dB, string sOut) {
 
@@ -226,8 +227,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   tSUSYCatFormula(0),
   SUSYNames( SUSYNames_ ),
   SUSYCatCommand( SUSYCatCommand_ ),
-  SampleNameForSyst( _SampleNameForSyst ),
-																				      Labels(labels)
+  SampleNameForSyst( _SampleNameForSyst ), nISOQCD(0), Labels(labels)
 {
 
   gROOT->cd();
@@ -235,10 +235,10 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   TH1::SetDefaultSumw2();
    
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "tS" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange, kOrange+1 , kOrange-1 ,  kGreen+2 ,  kBlue,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
-  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "tS" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
+  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
 
   // vector<TString>  cnames = {"tChannel", "Wtolnu","QCD", "DY", "Top", "MC", "SUSY" , "data" };
@@ -270,7 +270,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
     TH1* theHP = NULL;
     TH1* theHN = NULL;
-    if( cnames[i] == "tChannel" || cnames[i] == "tS" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
+    if( cnames[i] == "tChannel" || cnames[i] == "sChannel" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
       theHP = allSignedHistos[ cnames[i]+"P" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_P" , "", nBins, Min, Max);
       theHN = allSignedHistos[ cnames[i]+"N" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_N" , "", nBins, Min, Max);
     }
@@ -319,16 +319,16 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   SUSYNames( SUSYNames_ ),
   SUSYCatCommand( SUSYCatCommand_ ),
   SampleNameForSyst(_SampleNameForSyst),
-	    Labels(labels){
+	      nISOQCD(0),Labels(labels){
 
   gROOT->cd();
 
   TH1::SetDefaultSumw2();
    
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "tS" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange, kOrange+1 , kOrange-1 ,  kGreen+2 ,  kBlue,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
-  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "tS" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
+  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
 
   //vector<TString>  cnames = {"BCtoE", "EMEnriched" , "MuEnriched" , "GJets" , "VV" , "Wtolnu", "DY", "Top" ,"TTV" , "STop" , "MC", "SUSY" , "data" };
@@ -355,7 +355,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
     TH1* theHP = NULL;
     TH1* theHN = NULL;
-    if( cnames[i] == "tChannel" || cnames[i] == "tS" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
+    if( cnames[i] == "tChannel" || cnames[i] == "sChannel" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
       cout << cnames[i] << endl;
       theHP = allSignedHistos[ cnames[i]+"P" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_P" , "", nBins, Min, Max);
       theHN = allSignedHistos[ cnames[i]+"N" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_N" , "", nBins, Min, Max);
@@ -435,7 +435,7 @@ void ExtendedObjectProperty::SetTree( TTree* tree , TString sampletype, TString 
   theH_N = 0;
   theH_P = 0;
   //cout <<  << endl;
-  if( CurrentSampleSName == "tChannel" || CurrentSampleSName == "tS" || CurrentSampleSName == "tbarChannel" || CurrentSampleSName == "tbarS" ){
+  if( CurrentSampleSName == "tChannel" || CurrentSampleSName == "sChannel" || CurrentSampleSName == "tbarChannel" || CurrentSampleSName == "tbarS" ){
     theH_P = allSignedHistos[ CurrentSampleSName +"P" ] ;
     theH_N = allSignedHistos[ CurrentSampleSName +"N" ] ;
   }
@@ -508,7 +508,16 @@ void ExtendedObjectProperty::Fill(double w){
   }
 }
 
-void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData ){
+void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData , bool iso ){
+  if( CurrentSampleSName == "QCD" ){
+    if( iso ){
+      nISOQCD += w ;
+      w = 0.0;
+    }else
+      w = 1.0;
+    isPSeudoData = false;
+  }
+
   if( theH ){
     if(Labels){
       TString value = (*Labels)[ int(dVal-0.5) ];
@@ -547,7 +556,7 @@ void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData ){
     }
   }
 
-  if( theMCH )
+  if( theMCH && CurrentSampleSName != "QCD" )
     theMCH->Fill(dVal , w);
 }
 
@@ -794,6 +803,21 @@ void ExtendedObjectProperty::Write( TDirectory* dir , int lumi ,bool plotratiost
     theH = allHistos[ histoNames[j] ];
     AddOverAndUnderFlow(theH, true, true);
 
+    if( histoNames[j] == "QCD" ){
+      theH->Scale( nISOQCD / theH->Integral() );
+
+      allHistos["MC"]->Add( theH );
+
+      TH1* hnewqcd = (TH1*) (theH->Clone("hPDQCD"));
+      for(int iii = 1 ; iii <= hnewqcd->GetNbinsX() ; iii++){
+	double val = hnewqcd->GetBinContent(iii);
+	int newval = gRandom->Poisson( val );
+	hnewqcd->SetBinContent( iii , newval );
+	hnewqcd->SetBinError( iii , sqrt(newval) );
+      }
+      allHistos["data"]->Add( hnewqcd );
+    }
+
     if(j < (NumberOfHistos -SUSYNames.size()- 3)){
       h_stack  -> Add(theH);
       Legend1->AddEntry(theH, histoNames[j] , "f");
@@ -828,7 +852,7 @@ void ExtendedObjectProperty::Write( TDirectory* dir , int lumi ,bool plotratiost
   if(plotratiostack){
     //plotRatioStack(h_stack, allHistos["MC"] , allHistos["data"], allHistos["SUSY"] , logy, false, Name + "_ratio", Legend1, Name, "Events", -10, -10, 2, true , "" , lumi)->Write();    
     //for(uint i =0 ; i<SUSYNames.size() ; i++){
-    TCanvas* ccc = plotRatioStack(h_stack, allHistos["MC"] , allHistos["data"], susycolors , true, false, Name + "_ratio"+ "_AllSUSY", Legend1, Name, "Events", -10, -10, 2, true , "" , lumi ) ; // , allHistos["SUSY_" + SUSYNames[1]] );
+    TCanvas* ccc = plotRatioStack(h_stack, allHistos["MC"] , allHistos["data"], susycolors , false, false, Name + "_ratio"+ "_AllSUSY", Legend1, Name, "Events", -10, -10, 2, true , "" , lumi ) ; // , allHistos["SUSY_" + SUSYNames[1]] );
     //if(Name == "One")
     //cout << CutName << "--" << allHistos["SUSY_"+SUSYNames[0] ]->GetEntries() << endl;
 
@@ -1139,10 +1163,10 @@ ExtendedEfficiency::ExtendedEfficiency(TString cutname , TString name, TString v
 
   TH1::SetDefaultSumw2();
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "tS" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange, kOrange+1 , kOrange-1 ,  kGreen+2 ,  kBlue,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
-  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "tS" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
+  // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
 
   TString varname = Name;
