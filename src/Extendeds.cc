@@ -518,6 +518,11 @@ void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData , b
     isPSeudoData = false;
   }
 
+  if( CurrentIsData ){
+    isPSeudoData = false;
+    w = 1.0;
+  }
+
   if( theH ){
     if(Labels){
       TString value = (*Labels)[ int(dVal-0.5) ];
