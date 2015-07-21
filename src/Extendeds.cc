@@ -235,8 +235,10 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   TH1::SetDefaultSumw2();
    
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -263,7 +265,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
     //cout << CutName + "_" + varname+"_"+cnames[i] << nBins << "-" << "-" <<  Min << "-" << Max << endl ;
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, Min, Max);
     theH -> SetFillColor  (ccolor[i]);
-    theH -> SetLineColor  (ccolor[i]);
+    theH -> SetLineColor  (kBlack);
     theH -> SetLineWidth  (2);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
@@ -325,8 +327,10 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
   TH1::SetDefaultSumw2();
    
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -348,7 +352,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, bins );
     theH -> SetFillColor  (ccolor[i]);
-    theH -> SetLineColor  (ccolor[i]);
+    theH -> SetLineColor  (kBlack);
     theH -> SetLineWidth  (2);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
@@ -791,18 +795,95 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   LumiBox.SetNDC();
   LumiBox.SetTextSize(0.0305);
   TString lumi = TString::Format("%1.2f",lumi_/1000.);
-  LumiBox.DrawLatex(0.68,0.943,"#sqrt{s} = 13 TeV, L = "+lumi+" fb^{-1}");//standard
+  //LumiBox.DrawLatex(0.68,0.943,"#sqrt{s} = 13 TeV, L = "+lumi+" fb^{-1}");//standard
   //LumiBox.DrawLatex(0.49,0.943,"CMS Preliminary, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS Preliminary
   //LumiBox.DrawLatex(0.62,0.943,"CMS, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS
+
+   TLatex *   tex = new TLatex(0.955,0.955,"1.00 fb^{-1} (13 TeV)");
+   tex->SetNDC();
+   tex->SetTextAlign(31);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.048);
+   tex->SetLineWidth(2);
+   tex->Draw();
+      tex = new TLatex(0.8684108,4612.434,"CMS");
+   tex->SetTextAlign(31);
+   tex->SetTextSize(0.05956813);
+   tex->SetLineWidth(2);
+   tex->Draw();
+      tex = new TLatex(1.421617,4179.812,"Preliminary");
+   tex->SetTextAlign(31);
+   tex->SetTextFont(52);
+   tex->SetTextSize(0.048);
+   tex->SetLineWidth(2);
+   tex->Draw();
 
   p_plot ->Draw();
   gPad->RedrawAxis();
 
-  if(leg != NULL ){
-    leg -> SetFillColor(0);
-    leg -> SetBorderSize(0);
-    leg -> Draw();
-  } 
+  //if(leg != NULL ){
+   leg = new TLegend(0.6129032,0.5035989,0.7983871,0.9156118,NULL,"brNDC");
+   leg->SetBorderSize(0);
+   leg->SetTextSize(0.0446761);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(0);
+   
+   TLegendEntry * entry=leg->AddEntry("NULL","Data","pl");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(20);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","#it{t}-channel","f");
+
+   entry->SetFillColor(kRed);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","t#bar{t}, tW, #it{s}-channel","f");
+
+   entry->SetFillColor(kOrange - 3);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","W/Z+jets, dibosons","f");
+
+   entry->SetFillColor(kGreen -2);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","QCD","f");
+
+   entry->SetFillColor(kGray);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+
+   leg->Draw();
+  //} 
 	
   // draw the ratio plot
   p_ratio ->cd();
@@ -1239,8 +1320,11 @@ ExtendedEfficiency::ExtendedEfficiency(TString cutname , TString name, TString v
 
   TH1::SetDefaultSumw2();
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -1252,7 +1336,7 @@ ExtendedEfficiency::ExtendedEfficiency(TString cutname , TString name, TString v
 
     TEfficiency* theEff = allEffs[ cnames[i] ] = new TEfficiency( CutName + "_" + varname+"_"+cnames[i]+ "_eff" , "", nBins, bins) ;
     theEff -> SetFillColor  (ccolor[i]);
-    theEff -> SetLineColor  (ccolor[i]);
+    theEff -> SetLineColor  (kBlack);
     theEff -> SetLineWidth  (2);
     theEff -> SetMarkerColor(ccolor[i]);
 
