@@ -135,6 +135,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     int cutPassCounter = 0;
     for (Long64_t jentry=0; jentry<maxloop;jentry++, counter++) {
       Sample.tree->GetEntry(jentry);
+      //cout << fTree.Event_EventNumber << endl;
       if(  !(fTree.Event_EventNumber == 11112683 || fTree.Event_EventNumber == 11112881 ) ){
 	//cout << " " ;
 	continue;
@@ -195,6 +196,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
       if(! pass)
 	continue;
+
+      int cut = 0;
+      cout << ++cut << endl;
 
       //cout << alllabels[ int(cutindex) ] << endl;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
@@ -270,6 +274,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  continue;
       }
 
+      cout << ++cut << endl;
       if( nLooseMuos > 0 )
       	continue;
 
@@ -286,6 +291,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  nLooseElectrons++;
       }
       
+      cout << ++cut << endl;
       if( nLooseElectrons > 0 )
       	continue;
 
@@ -305,6 +311,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       muon.SetPtEtaPhiE( fTree.muons_Pt[tightMuIndex] , fTree.muons_Eta[tightMuIndex] , fTree.muons_Phi[tightMuIndex] , fTree.muons_E[tightMuIndex] );
       if( muon.Energy() == 0.0 )
 	cout << "ZERO???" <<endl;
+      cout << ++cut << endl;
       for( int jid = 0 ; jid < fTree.jetsAK4_size ; jid++ ){
 	if( isnan(fTree.jetsAK4_Pt[jid]) || isnan(fTree.jetsAK4_Eta[jid]) || isnan(fTree.jetsAK4_Phi[jid]) || isnan(fTree.jetsAK4_E[jid]) ){
 	  cout << jid <<" " << fTree.jetsAK4_size << endl;
@@ -314,7 +321,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	jet.SetPtEtaPhiE( fTree.jetsAK4_Pt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_E[jid] );
 	double DR = muon.DeltaR( jet );
 
-	cout << "  " << jid << " : " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] << endl;
+	if( fTree.jetsAK4_Pt[jid]>20)
+	  cout << "  " << jid << " - " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] 
+	       << "-" << fTree.jetsAK4_numberOfDaughters[jid] << "-" <<  fTree.jetsAK4_MuonEnergy[jid] << "-" <<  fTree.jetsAK4_chargedMultiplicity[jid] << "-" <<  fTree.jetsAK4_chargedHadronEnergy[jid] << "-" <<  fTree.jetsAK4_chargedEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralHadronEnergy[jid] << "-" <<  fTree.jetsAK4_E[jid] << "-" <<  fTree.jetsAK4_jecFactor0[jid]  << endl ;
       	if( fTree.jetsAK4_Pt[jid] > 40 &&
 	    fabs( fTree.jetsAK4_Eta[jid] ) < 4.7 &&
 	    fTree.jetsAK4_PassesID[jid] > 0.5  // IsLoose for Fall14, PassesID for SPRING samples
