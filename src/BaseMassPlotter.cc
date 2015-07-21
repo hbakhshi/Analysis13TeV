@@ -69,8 +69,11 @@ void BaseMassPlotter::loadSamples(const char* filename){
       if(fVerbose > 3)
 	cout<<"my file: "<<file<<endl;
 
-		
-      s.tree = new TChain("DMTreesDumper/ttDM__noSyst"); //(TTree*)f->Get("MassTree");
+
+      if( s.sname == "Data" )
+	s.tree = new TChain("DMTreesDumper/ttDM__noSyst"); //(TTree*)f->Get("MassTree");
+      else
+	s.tree = new TChain("ttDM__noSyst"); //(TTree*)f->Get("MassTree");
       ((TChain*)(s.tree))->Add( file , 0 );
       ((TChain*)(s.tree))->LoadTree(0);
 

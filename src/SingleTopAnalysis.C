@@ -69,7 +69,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   alllabels.push_back( "NoCut" );
   alllabels.push_back( "Trigger" );
   alllabels.push_back( "MuonSelection" );
-  alllabels.push_back( "MuonVeto1" );
+  //alllabels.push_back( "MuonVeto1" );
   alllabels.push_back( "MuonVeto" );
   alllabels.push_back( "ElectronVeto" );
   alllabels.push_back( "2Jets" );
@@ -135,15 +135,15 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     int cutPassCounter = 0;
     for (Long64_t jentry=0; jentry<maxloop;jentry++, counter++) {
       Sample.tree->GetEntry(jentry);
-      //cout << fTree.Event_EventNumber << endl;
-      if(  !(fTree.Event_EventNumber == 11112683 || fTree.Event_EventNumber == 11112881 ) ){
-	//cout << " " ;
-	continue;
-      }
-      else{
-	cutPassCounter ++ ;
-	cout << cutPassCounter << " : " << fTree.Event_EventNumber << " : " << endl;
-      }
+      // //cout << fTree.Event_EventNumber << endl;
+      // if(  !(fTree.Event_EventNumber == 11112683 || fTree.Event_EventNumber == 11112881 ) ){
+      // 	//cout << " " ;
+      // 	continue;
+      // }
+      // else{
+      // 	cutPassCounter ++ ;
+      // 	cout << cutPassCounter << " : " << fTree.Event_EventNumber << " : " << endl;
+      // }
       EventsIsPSeudoData = PSeudoDataRandom->Uniform();
 
       if( lastFileName.compare( ((TChain*)Sample.tree)->GetFile()->GetName() ) != 0 ) {
@@ -169,7 +169,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       nextcut.Reset();
       double weight = Weight;
 
-      if( Sample.name == "Signal" || Sample.sname == "sChannel" || Sample.sname == "tbarS"  ){
+      if( Sample.name == "Signal" || Sample.name == "WJets"  ){
 	//cout << "SIGNAL" << endl;
 	weight *= fTree.Event_LHEWeightSign ;
 	// if(fTree.Event_LHEWeightSign < 0.0)
@@ -198,14 +198,13 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	continue;
 
       int cut = 0;
-      cout << ++cut << endl;
 
       //cout << alllabels[ int(cutindex) ] << endl;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
 
-      if( false ) //fTree.Event_passesHLT_IsoMu24_eta2p1_IterTrk02_v1 < 0.5 ) //fTree.Event_passesHLT_IsoMu24_IterTrk02 < 0.5 && 
+      if( data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v2 > 0.5) )
       	continue;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
@@ -247,34 +246,29 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  }
       }      
 
-      if( Sample.sname != "QCD" )
-	if( nTightMuons != 1 )
+   
+      if( nTightMuons != 1 )
+	if( Sample.sname != "QCD" )
 	  continue;
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      cutindex ++ ;
 
-      // if( Sample.sname != "QCD" )
-      // 	if( nTightNonIsoMuons != 0 )
-      // 	  continue;
-
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
+	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      }
       cutindex ++ ;
 
       bool isiso = true;
       if(Sample.sname == "QCD"){
-	if( nTightMuons == 0 && nTightNonIsoMuons == 1){
-	  isiso = false;
-	  tightMuIndex = nonTightMuIndex ;
-	}
-	else if ( nTightMuons == 1 && nTightNonIsoMuons == 0)
-	  isiso = true;
-	else
-	  continue;
+      	if( nTightMuons == 0 && nTightNonIsoMuons == 1){
+      	  isiso = false;
+      	  tightMuIndex = nonTightMuIndex ;
+      	}
+      	else if ( nTightMuons == 1 )
+      	  isiso = true;
+      	else
+      	  continue;
       }
-
-      cout << ++cut << endl;
+      
       if( nLooseMuos > 0 )
       	continue;
 
@@ -291,7 +285,6 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  nLooseElectrons++;
       }
       
-      cout << ++cut << endl;
       if( nLooseElectrons > 0 )
       	continue;
 
@@ -311,49 +304,42 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       muon.SetPtEtaPhiE( fTree.muons_Pt[tightMuIndex] , fTree.muons_Eta[tightMuIndex] , fTree.muons_Phi[tightMuIndex] , fTree.muons_E[tightMuIndex] );
       if( muon.Energy() == 0.0 )
 	cout << "ZERO???" <<endl;
-      cout << ++cut << endl;
       for( int jid = 0 ; jid < fTree.jetsAK4_size ; jid++ ){
-	if( isnan(fTree.jetsAK4_Pt[jid]) || isnan(fTree.jetsAK4_Eta[jid]) || isnan(fTree.jetsAK4_Phi[jid]) || isnan(fTree.jetsAK4_E[jid]) ){
-	  cout << jid <<" " << fTree.jetsAK4_size << endl;
-	  continue;
-	}
-	TLorentzVector jet;
-	jet.SetPtEtaPhiE( fTree.jetsAK4_Pt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_E[jid] );
-	double DR = muon.DeltaR( jet );
+	//if( fTree.jetsAK4_Pt[jid]>20)
+	//cout << "  " << jid << " - " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] << "-" << fTree.jetsAK4_numberOfDaughters[jid] << "-" <<  fTree.jetsAK4_MuonEnergy[jid] << "-" <<  fTree.jetsAK4_chargedMultiplicity[jid] << "-" <<  fTree.jetsAK4_chargedHadronEnergy[jid] << "-" <<  fTree.jetsAK4_chargedEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralHadronEnergy[jid] << "-" <<  fTree.jetsAK4_E[jid] << "-" <<  fTree.jetsAK4_jecFactor0[jid]  << endl ;
 
-	if( fTree.jetsAK4_Pt[jid]>20)
-	  cout << "  " << jid << " - " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] 
-	       << "-" << fTree.jetsAK4_numberOfDaughters[jid] << "-" <<  fTree.jetsAK4_MuonEnergy[jid] << "-" <<  fTree.jetsAK4_chargedMultiplicity[jid] << "-" <<  fTree.jetsAK4_chargedHadronEnergy[jid] << "-" <<  fTree.jetsAK4_chargedEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralHadronEnergy[jid] << "-" <<  fTree.jetsAK4_E[jid] << "-" <<  fTree.jetsAK4_jecFactor0[jid]  << endl ;
       	if( fTree.jetsAK4_Pt[jid] > 40 &&
 	    fabs( fTree.jetsAK4_Eta[jid] ) < 4.7 &&
-	    fTree.jetsAK4_PassesID[jid] > 0.5  // IsLoose for Fall14, PassesID for SPRING samples
-	    && DR >= 0.3
-	    //fTree.jetsAK4_PassesDRtight[jid] > 0.5 
+	    fTree.jetsAK4_PassesID[jid] > 0.5  // IsLoose for Fall14, PassesID for SPRING samples ; 	    //fTree.jetsAK4_PassesDRtight[jid] > 0.5 
 	    ){
-	  nJets++;
-	  if( nJets == 1 )
-	    j1index = jid ;
-	  else if(nJets == 2 )
-	    j2index = jid ;
-	  else if( nJets == 3 )
-	    j3index = jid ;
-
-	  if( fTree.jetsAK4_CSV[jid] > 0.97  && fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
-	    howManyBJets ++;
-	    if(howManyBJets==1)
-	      bjIndex = jid ;
-	    else if(howManyBJets==2)
-	      bj2Index = jid ;
-	  }else
-	    jprimeIndex = jid ;
+	  TLorentzVector jet;
+	  jet.SetPtEtaPhiE( fTree.jetsAK4_Pt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_E[jid] );
+	  double DR = muon.DeltaR( jet );
+	  if ( DR >= 0.3 ){
+	    nJets++;
+	    if( nJets == 1 )
+	      j1index = jid ;
+	    else if(nJets == 2 )
+	      j2index = jid ;
+	    else if( nJets == 3 )
+	      j3index = jid ;
+	    
+	    if( fTree.jetsAK4_CSV[jid] > 0.97  && fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
+	      howManyBJets ++;
+	      if(howManyBJets==1)
+		bjIndex = jid ;
+	      else if(howManyBJets==2)
+		bj2Index = jid ;
+	    }else
+	      jprimeIndex = jid ;
+	  }
 	}
       }
-
+      
       nJetsBeforeCut.Fill( nJets , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       if (nJets != NUMBEROFJETS)
 	continue;
 
-      cout << fTree.Event_EventNumber << endl;
 
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );

@@ -235,7 +235,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   TH1::SetDefaultSumw2();
    
 
-  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
   vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
   //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
   //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
@@ -327,7 +327,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
   TH1::SetDefaultSumw2();
    
-  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
   vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
   //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
   //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
@@ -522,10 +522,10 @@ void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData , b
     isPSeudoData = false;
   }
 
-  if( CurrentIsData ){
-    isPSeudoData = false;
-    w = 1.0;
-  }
+  //if( CurrentIsData ){
+  isPSeudoData = false;
+  //   w = 1.0;
+  // }
 
   if( theH ){
     if(Labels){
@@ -607,23 +607,23 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   //TCanvas* c1 = new TCanvas(name,"", 20,100,1000,700);
   //TCanvas* c1 = new TCanvas(name+"c_ratio"+ "_" + Name + "_" + CutName,"",0,0,600,600 /*37, 60,636,670*/);
   //c1->SetFrameLineWidth(1);
-
-// Dimensions and margines for canvas
+  
+  // Dimensions and margines for canvas
   TCanvas* c1 = new TCanvas(name+"c_ratio"+ "_" + Name + "_" + CutName,"",632,112,500,502);
-   c1->SetHighLightColor(2);
-   c1->Range(0,0,1,1);
-   c1->SetFillColor(0);
-   c1->SetBorderMode(0);
-   c1->SetBorderSize(2);
-   c1->SetLogy();
-   c1->SetTickx(1);
-   c1->SetTicky(1);
-   c1->SetLeftMargin(0.16);
-   c1->SetRightMargin(0.02);
-   c1->SetTopMargin(0.05);
-   c1->SetBottomMargin(0.13);
-   c1->SetFrameFillStyle(0);
-   c1->SetFrameBorderMode(0);
+  c1->SetHighLightColor(2);
+  c1->Range(0,0,1,1);
+  c1->SetFillColor(0);
+  c1->SetBorderMode(0);
+  c1->SetBorderSize(2);
+  c1->SetLogy();
+  c1->SetTickx(1);
+  c1->SetTicky(1);
+  c1->SetLeftMargin(0.16);
+  c1->SetRightMargin(0.02);
+  c1->SetTopMargin(0.05);
+  c1->SetBottomMargin(0.13);
+  c1->SetFrameFillStyle(0);
+  c1->SetFrameBorderMode(0);
   c1 -> cd();
 	
   float border = 0.2;
@@ -644,7 +644,7 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
 
 // Dimensions and margines for main pad
   TPad *p_plot  = new TPad(name+"_plotpad"+ "_" + Name + "_" + CutName,  "Pad containing the overlay plot", 0,0.15,1,1);
-   p_plot->cd();
+  //p_plot->cd();
    p_plot->Range(-0.9756097,-809.2457,5.121951,5415.875);
    p_plot->SetFillColor(0);
    p_plot->SetBorderMode(0);
@@ -673,7 +673,7 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   //p_ratio->Draw();
 // Dimensions and margines for ratio pad
   TPad *p_ratio = new TPad(name+"_ratiopad"+ "_" + Name + "_" + CutName, "Pad containing the ratio",0,0,1,0.15);
-   p_ratio->cd();
+  //p_ratio->cd();
    p_ratio->Range(-0.9756097,-0.3170732,5.121951,2.121951);
    p_ratio->SetFillColor(0);
    p_ratio->SetBorderMode(0);
@@ -733,20 +733,6 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   //hstack->Print("all");
 
 // Fonts and offset for the stacked histogram
-   hstack->GetXaxis()->SetTitle(xtitle);
-   hstack->GetXaxis()->SetLabelFont(42);
-   hstack->GetXaxis()->SetLabelOffset(0.007);
-   hstack->GetXaxis()->SetLabelSize(0.045);
-   hstack->GetXaxis()->SetTitleSize(0.06);
-   hstack->GetXaxis()->SetTitleOffset(0.95);
-   hstack->GetXaxis()->SetTitleFont(42);
-   //hstack->GetYaxis()->SetTitle("Events / X");
-   hstack->GetYaxis()->SetTitle(yTitle.str().c_str());
-   hstack->GetYaxis()->SetLabelFont(42);
-   hstack->GetYaxis()->SetLabelSize(0.045);
-   hstack->GetYaxis()->SetTitleSize(0.06);
-   hstack->GetYaxis()->SetTitleOffset(1.45);
-   hstack->GetYaxis()->SetTitleFont(42);
 	
   //MT2_bSel[0]->SetTitleSize(0.03);
   ///MT2_bSel[0]->SetTitleOffset(1.);
@@ -754,6 +740,24 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   // if( CutName != "PreSelection" )
   //   hstack->GetXaxis()->SetTitle(xtitle);
   hstack->Draw("hist");
+
+  // cout << hstack->GetXaxis()->GetTitle() << endl;
+  //  hstack->GetXaxis()->SetTitle(xtitle);
+  //  hstack->GetXaxis()->SetLabelFont(42);
+  //  hstack->GetXaxis()->SetLabelOffset(0.007);
+  //  hstack->GetXaxis()->SetLabelSize(0.045);
+  //  hstack->GetXaxis()->SetTitleSize(0.06);
+  //  hstack->GetXaxis()->SetTitleOffset(0.95);
+  //  hstack->GetXaxis()->SetTitleFont(42);
+  //  //hstack->GetYaxis()->SetTitle("Events / X");
+  //  hstack->GetYaxis()->SetTitle(yTitle.str().c_str());
+  //  hstack->GetYaxis()->SetLabelFont(42);
+  //  hstack->GetYaxis()->SetLabelSize(0.045);
+  //  hstack->GetYaxis()->SetTitleSize(0.06);
+  //  hstack->GetYaxis()->SetTitleOffset(1.45);
+  //  hstack->GetYaxis()->SetTitleFont(42);
+
+
   h2->SetMarkerColor(1);
   h2    ->Draw("sameE");
 
