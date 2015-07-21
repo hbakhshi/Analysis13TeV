@@ -25,7 +25,7 @@ LIB=lib/libSingleTopAnalysis.so
 .SUFFIXES: .cc,.C,.hh,.h
 
 # Rules ====================================
-all: $(LIB)  bin/Run2j1t bin/Run3j2t
+all: $(LIB)  bin/Run2j1t bin/Run3j2t bin/Skimmer
 #bin/Run2j0t bin/Run3j2t bin/RunSynch
 
 lib : $(LIB)
@@ -34,6 +34,11 @@ $(LIB): $(OBJS)
 	mkdir -p lib
 	$(LD) $(LDFLAGS) $(GLIBS) $(SOFLAGS) $(OBJS) -o $(LIB)
 	@echo "$(LIB) successfully compiled!"
+
+bin/Skimmer : src/Skimmer.cc $(LIB)	
+	mkdir -p bin
+	$(CXX) $(CXXFLAGS) -ldl $(LDFLAGS) -o $@ $^ $(GLIBS)
+
 
 bin/Run2j1t : src/SingleTopAnalysis.C $(LIB)	
 	mkdir -p bin

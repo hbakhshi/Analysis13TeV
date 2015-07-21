@@ -235,8 +235,10 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   TH1::SetDefaultSumw2();
    
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -263,7 +265,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
     //cout << CutName + "_" + varname+"_"+cnames[i] << nBins << "-" << "-" <<  Min << "-" << Max << endl ;
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, Min, Max);
     theH -> SetFillColor  (ccolor[i]);
-    theH -> SetLineColor  (ccolor[i]);
+    theH -> SetLineColor  (kBlack);
     theH -> SetLineWidth  (2);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
@@ -325,8 +327,10 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
   TH1::SetDefaultSumw2();
    
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -348,7 +352,7 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, bins );
     theH -> SetFillColor  (ccolor[i]);
-    theH -> SetLineColor  (ccolor[i]);
+    theH -> SetLineColor  (kBlack);
     theH -> SetLineWidth  (2);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
@@ -601,8 +605,25 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
 
 	
   //TCanvas* c1 = new TCanvas(name,"", 20,100,1000,700);
-  TCanvas* c1 = new TCanvas(name+"c_ratio"+ "_" + Name + "_" + CutName,"",0,0,600,600 /*37, 60,636,670*/);
-  c1->SetFrameLineWidth(1);
+  //TCanvas* c1 = new TCanvas(name+"c_ratio"+ "_" + Name + "_" + CutName,"",0,0,600,600 /*37, 60,636,670*/);
+  //c1->SetFrameLineWidth(1);
+
+// Dimensions and margines for canvas
+  TCanvas* c1 = new TCanvas(name+"c_ratio"+ "_" + Name + "_" + CutName,"",632,112,500,502);
+   c1->SetHighLightColor(2);
+   c1->Range(0,0,1,1);
+   c1->SetFillColor(0);
+   c1->SetBorderMode(0);
+   c1->SetBorderSize(2);
+   c1->SetLogy();
+   c1->SetTickx(1);
+   c1->SetTicky(1);
+   c1->SetLeftMargin(0.16);
+   c1->SetRightMargin(0.02);
+   c1->SetTopMargin(0.05);
+   c1->SetBottomMargin(0.13);
+   c1->SetFrameFillStyle(0);
+   c1->SetFrameBorderMode(0);
   c1 -> cd();
 	
   float border = 0.2;
@@ -610,26 +631,65 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   if(border == scale)
     cout << "just to avoid warning message" << endl;
 
-  TPad *p_plot  = new TPad(name+"_plotpad"+ "_" + Name + "_" + CutName,  "Pad containing the overlay plot", 0,0.211838,1,1 /*0.00, border, 1.00, 1.00, 0, 0*/);
+  //TPad *p_plot  = new TPad(name+"_plotpad"+ "_" + Name + "_" + CutName,  "Pad containing the overlay plot", 0,0.211838,1,1 /*0.00, border, 1.00, 1.00, 0, 0*/);
   //p_plot->SetBottomMargin(0.05);
   //p_plot->SetTopMargin(0.09);
   //p_plot->SetLeftMargin(0.1669107);
   //p_plot->SetRightMargin(0.02);
-  p_plot->SetLeftMargin(0.131579);
-  p_plot->SetRightMargin(0.08);
-  p_plot->SetTopMargin(0.06895515);
-  p_plot->SetBottomMargin(0.07206074);
-  p_plot->Draw();
-  TPad *p_ratio = new TPad(name+"_ratiopad"+ "_" + Name + "_" + CutName, "Pad containing the ratio",   0,0.01863354,0.9967105,0.2189441/*     0.00, 0.05, 1.00, border, 0, 0*/);
+  //p_plot->SetLeftMargin(0.131579);
+  //p_plot->SetRightMargin(0.08);
+  //p_plot->SetTopMargin(0.06895515);
+  //p_plot->SetBottomMargin(0.07206074);
+  //p_plot->Draw();
+
+// Dimensions and margines for main pad
+  TPad *p_plot  = new TPad(name+"_plotpad"+ "_" + Name + "_" + CutName,  "Pad containing the overlay plot", 0,0.15,1,1);
+   p_plot->cd();
+   p_plot->Range(-0.9756097,-809.2457,5.121951,5415.875);
+   p_plot->SetFillColor(0);
+   p_plot->SetBorderMode(0);
+   p_plot->SetBorderSize(2);
+   p_plot->SetTickx(1);
+   p_plot->SetTicky(1);
+   p_plot->SetLeftMargin(0.16);
+   p_plot->SetRightMargin(0.02);
+   p_plot->SetTopMargin(0.055);
+   p_plot->SetBottomMargin(0.13);
+   p_plot->SetFrameFillStyle(0);
+   p_plot->SetFrameBorderMode(0);
+   p_plot->SetFrameFillStyle(0);
+   p_plot->SetFrameBorderMode(0);
+   p_plot->Draw();
+
+  //TPad *p_ratio = new TPad(name+"_ratiopad"+ "_" + Name + "_" + CutName, "Pad containing the ratio",   0,0.01863354,0.9967105,0.2189441/*     0.00, 0.05, 1.00, border, 0, 0*/);
   //p_ratio->SetTopMargin(0.03);
   //p_ratio->SetBottomMargin(0.05/*5*/);
   //p_ratio->SetRightMargin(0.02);
-  p_ratio->SetLeftMargin(0.1336634);	
-  p_ratio->SetRightMargin(0.075);
-  p_ratio->SetTopMargin(0.06976745);
-  p_ratio->SetBottomMargin(0.2790698);
+  //p_ratio->SetLeftMargin(0.1336634);	
+  //p_ratio->SetRightMargin(0.075);
+  //p_ratio->SetTopMargin(0.06976745);
+  //p_ratio->SetBottomMargin(0.2790698);
 
-  p_ratio->Draw();
+  //p_ratio->Draw();
+// Dimensions and margines for ratio pad
+  TPad *p_ratio = new TPad(name+"_ratiopad"+ "_" + Name + "_" + CutName, "Pad containing the ratio",0,0,1,0.15);
+   p_ratio->cd();
+   p_ratio->Range(-0.9756097,-0.3170732,5.121951,2.121951);
+   p_ratio->SetFillColor(0);
+   p_ratio->SetBorderMode(0);
+   p_ratio->SetBorderSize(2);
+   p_ratio->SetGridy();
+   p_ratio->SetTickx(1);
+   p_ratio->SetTicky(1);
+   p_ratio->SetLeftMargin(0.16);
+   p_ratio->SetRightMargin(0.02);
+   p_ratio->SetTopMargin(0.05);
+   p_ratio->SetBottomMargin(0.13);
+   p_ratio->SetFrameFillStyle(0);
+   p_ratio->SetFrameBorderMode(0);
+   p_ratio->SetFrameFillStyle(0);
+   p_ratio->SetFrameBorderMode(0);
+   p_ratio->Draw();
  
   // draw overlay plot
   p_plot ->cd();
@@ -671,11 +731,22 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   //}
   hstack->Draw();
   //hstack->Print("all");
-  hstack->GetYaxis()->SetTitle(yTitle.str().c_str());
-  hstack->GetYaxis()->SetLabelSize(0.05);
-  hstack->GetYaxis()->SetTitleSize(0.05);
-  hstack->GetYaxis()->SetTitleOffset(1.3);
 
+// Fonts and offset for the stacked histogram
+   hstack->GetXaxis()->SetTitle(xtitle);
+   hstack->GetXaxis()->SetLabelFont(42);
+   hstack->GetXaxis()->SetLabelOffset(0.007);
+   hstack->GetXaxis()->SetLabelSize(0.045);
+   hstack->GetXaxis()->SetTitleSize(0.06);
+   hstack->GetXaxis()->SetTitleOffset(0.95);
+   hstack->GetXaxis()->SetTitleFont(42);
+   //hstack->GetYaxis()->SetTitle("Events / X");
+   hstack->GetYaxis()->SetTitle(yTitle.str().c_str());
+   hstack->GetYaxis()->SetLabelFont(42);
+   hstack->GetYaxis()->SetLabelSize(0.045);
+   hstack->GetYaxis()->SetTitleSize(0.06);
+   hstack->GetYaxis()->SetTitleOffset(1.45);
+   hstack->GetYaxis()->SetTitleFont(42);
 	
   //MT2_bSel[0]->SetTitleSize(0.03);
   ///MT2_bSel[0]->SetTitleOffset(1.);
@@ -724,18 +795,95 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   LumiBox.SetNDC();
   LumiBox.SetTextSize(0.0305);
   TString lumi = TString::Format("%1.2f",lumi_/1000.);
-  LumiBox.DrawLatex(0.68,0.943,"#sqrt{s} = 13 TeV, L = "+lumi+" fb^{-1}");//standard
+  //LumiBox.DrawLatex(0.68,0.943,"#sqrt{s} = 13 TeV, L = "+lumi+" fb^{-1}");//standard
   //LumiBox.DrawLatex(0.49,0.943,"CMS Preliminary, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS Preliminary
   //LumiBox.DrawLatex(0.62,0.943,"CMS, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS
+
+   TLatex *   tex = new TLatex(0.955,0.955,"1.00 fb^{-1} (13 TeV)");
+   tex->SetNDC();
+   tex->SetTextAlign(31);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.048);
+   tex->SetLineWidth(2);
+   tex->Draw();
+      tex = new TLatex(0.8684108,4612.434,"CMS");
+   tex->SetTextAlign(31);
+   tex->SetTextSize(0.05956813);
+   tex->SetLineWidth(2);
+   tex->Draw();
+      tex = new TLatex(1.421617,4179.812,"Preliminary");
+   tex->SetTextAlign(31);
+   tex->SetTextFont(52);
+   tex->SetTextSize(0.048);
+   tex->SetLineWidth(2);
+   tex->Draw();
 
   p_plot ->Draw();
   gPad->RedrawAxis();
 
-  if(leg != NULL ){
-    leg -> SetFillColor(0);
-    leg -> SetBorderSize(0);
-    leg -> Draw();
-  } 
+  //if(leg != NULL ){
+   leg = new TLegend(0.6129032,0.5035989,0.7983871,0.9156118,NULL,"brNDC");
+   leg->SetBorderSize(0);
+   leg->SetTextSize(0.0446761);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(0);
+   
+   TLegendEntry * entry=leg->AddEntry("NULL","Data","pl");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(20);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","#it{t}-channel","f");
+
+   entry->SetFillColor(kRed);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","t#bar{t}, tW, #it{s}-channel","f");
+
+   entry->SetFillColor(kOrange - 3);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","W/Z+jets, dibosons","f");
+
+   entry->SetFillColor(kGreen -2);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","QCD","f");
+
+   entry->SetFillColor(kGray);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+
+   leg->Draw();
+  //} 
 	
   // draw the ratio plot
   p_ratio ->cd();
@@ -754,20 +902,24 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   TH1D*h_ratio_mc = (TH1D*)h1_orig->Clone("h1_copy");
   h_ratio_mc->Divide(h1);
   h_ratio_mc->GetYaxis()->SetRangeUser(0,2);
-  h_ratio_mc->GetXaxis()->SetLabelSize( 0.);
-  h_ratio_mc->GetYaxis()->SetTitle("Data / MC");
-  h_ratio_mc->GetXaxis()->SetTitle(xtitle);
-  h_ratio_mc->GetXaxis()->SetTitleSize(0.2);
-  h_ratio_mc->GetXaxis()->SetTitleOffset(0.5);
-  h_ratio_mc->GetYaxis()->SetLabelSize(0.19);
-  h_ratio_mc->GetXaxis()->SetTickLength(0.09);
-  h_ratio_mc	->GetYaxis()->SetTitleSize(0.18);
-  h_ratio_mc->GetYaxis()->SetTitleOffset(0.36);
-  h_ratio_mc->GetYaxis()->SetNdivisions(509);
+// Fonts and offset for the ratio
+   h_ratio_mc->GetXaxis()->SetLabelFont(42);
+   h_ratio_mc->GetXaxis()->SetLabelSize(0);
+   h_ratio_mc->GetXaxis()->SetTitleSize(0.035);
+   h_ratio_mc->GetXaxis()->SetTitleFont(42);
+   h_ratio_mc->GetYaxis()->SetTitle("Data / MC");
+   h_ratio_mc->GetYaxis()->CenterTitle(true);
+   h_ratio_mc->GetYaxis()->SetNdivisions(504);
+   h_ratio_mc->GetYaxis()->SetLabelFont(42);
+   h_ratio_mc->GetYaxis()->SetLabelOffset(0.007);
+   h_ratio_mc->GetYaxis()->SetLabelSize(0.17);
+   h_ratio_mc->GetYaxis()->SetTitleSize(0.24);
+   h_ratio_mc->GetYaxis()->SetTitleOffset(0.35);
+   h_ratio_mc->GetYaxis()->SetTitleFont(42);
 
-	
-  h_ratio_mc->SetFillStyle(3001);
-  h_ratio_mc->SetFillColor(1);
+
+  //h_ratio_mc->SetFillStyle(3001);
+  //h_ratio_mc->SetFillColor(1);
   h_ratio_mc->Draw("E2");
   
   h_ratio->SetMarkerColor(1);
@@ -1168,8 +1320,11 @@ ExtendedEfficiency::ExtendedEfficiency(TString cutname , TString name, TString v
 
   TH1::SetDefaultSumw2();
 
-  vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+  //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
+  //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
+
+  vector<TString>  cnames = {"QCD", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
 
   // vector<TString>  cnames = {"tChannel", "tbarChannel" , "ttbar", "tW" , "tbarW" , "sChannel" , "tbarS" , "WJets","DY","QCD",  "MC", "SUSY" , "data" };
   // vector<int>      ccolor = {  kRed, kRed,  kOrange, kOrange+1 , kOrange-1 ,kOrange-1 , kGreen+2 , kGreen+2 , kBlue, kGray , 500, 1 , kBlack };
@@ -1181,7 +1336,7 @@ ExtendedEfficiency::ExtendedEfficiency(TString cutname , TString name, TString v
 
     TEfficiency* theEff = allEffs[ cnames[i] ] = new TEfficiency( CutName + "_" + varname+"_"+cnames[i]+ "_eff" , "", nBins, bins) ;
     theEff -> SetFillColor  (ccolor[i]);
-    theEff -> SetLineColor  (ccolor[i]);
+    theEff -> SetLineColor  (kBlack);
     theEff -> SetLineWidth  (2);
     theEff -> SetMarkerColor(ccolor[i]);
 
