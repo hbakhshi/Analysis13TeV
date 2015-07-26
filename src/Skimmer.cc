@@ -45,15 +45,10 @@ int main(int argc, char* argv[]) {
   int counter = 0;
   Long64_t nentries =  chain.GetEntries();
   cout << nentries << endl;
-  return 0;
+  //return 0;
 
   for (Long64_t jentry=0; jentry<nentries;jentry++, counter++) {    
 
-    chain.SetBranchStatus("*", 0 );
-    chain.SetBranchStatus("muons_Pt", 1 );
-    chain.SetBranchStatus("muons_IsTightMuon", 1 );
-    chain.SetBranchStatus("muons_Eta", 1 );
-    chain.SetBranchStatus("muons_size", 1 );
     chain.GetEntry(jentry);
     
     if( lastFileName.compare( chain.GetFile()->GetName() ) != 0 ) {
@@ -80,7 +75,7 @@ int main(int argc, char* argv[]) {
       continue ;
 
     
-    chain.SetBranchStatus("*", 1 );
+    //chain.SetBranchStatus("*", 1 );
     chain.GetEntry(jentry);
 
     newTree->Fill();

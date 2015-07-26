@@ -66,16 +66,16 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     ExtendedCut* thecut = (ExtendedCut*)objcut ;
     alllabels.push_back( thecut->Name );
   }  
-  alllabels.push_back( "NoCut" );
-  alllabels.push_back( "Trigger" );
-  alllabels.push_back( "MuonSelection" );
+  //alllabels.push_back( "NoCut" );
+  //alllabels.push_back( "Trigger" );
+  //alllabels.push_back( "MuonSelection" );
   //alllabels.push_back( "MuonVeto1" );
-  alllabels.push_back( "MuonVeto" );
-  alllabels.push_back( "ElectronVeto" );
-  alllabels.push_back( "2Jets" );
-  alllabels.push_back( "1BJet" );
-  alllabels.push_back( "MT" );
-  alllabels.push_back( "TopMass" );
+  //alllabels.push_back( "MuonVeto" );
+  alllabels.push_back( "== 1#mu" );
+  alllabels.push_back( "== 2-Jets" );
+  alllabels.push_back( "== 1-bJet" );
+  alllabels.push_back( "MT >50 GeV" );
+  alllabels.push_back( "mtop" );
   //cout << alllabels.size() << endl;
 
   ExtendedObjectProperty cutflowtable("" , "cutflowtable" , "1" , alllabels.size() ,  0 , alllabels.size() , "2", {}, &alllabels );  
@@ -169,7 +169,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       nextcut.Reset();
       double weight = Weight;
 
-      if( Sample.name == "Signal" || Sample.name == "WJets"  ){
+      if( Sample.name == "Signal" || Sample.name == "WJets" || Sample.name == "DYJets"   ){
 	//cout << "SIGNAL" << endl;
 	weight *= fTree.Event_LHEWeightSign ;
 	// if(fTree.Event_LHEWeightSign < 0.0)
@@ -200,15 +200,19 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       int cut = 0;
 
       //cout << alllabels[ int(cutindex) ] << endl;
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      cutindex ++ ;
+//       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+//       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+//       cutindex ++ ;
 
       if( data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v2 > 0.5) )
       	continue;
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      cutindex ++ ;
+      
+      if( !data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v1 > 0.5) )
+	continue;
+
+//       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+//       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+//       cutindex ++ ;
 
       //cout << "nMuons : " << fTree.muons_size << endl;
       int tightMuIndex =-1;
@@ -251,11 +255,11 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	if( Sample.sname != "QCD" )
 	  continue;
 
-      if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
-	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      }
-      cutindex ++ ;
+//       if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
+// 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+// 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+//       }
+//       cutindex ++ ;
 
       bool isiso = true;
       if(Sample.sname == "QCD"){
@@ -272,9 +276,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if( nLooseMuos > 0 )
       	continue;
 
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      cutindex ++ ;
+//       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+//       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+//       cutindex ++ ;
 
       int nLooseElectrons = 0;
       for( int iele = 0 ; iele < fTree.electrons_size;iele ++ ){
@@ -358,7 +362,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       MTBeforeCut.Fill( MT , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       // if( fTree.met_Pt < 45 )
       // 	continue;
-      if( MT < 50 )
+      if( MT < 50 && NUMBEROFBJETS == 1 )
       	continue;
       
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
@@ -377,7 +381,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       double topMass = topUtils.top4Momentum( muLV , bjetLV , fTree.met_Px , fTree.met_Py ).mass();
       TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
-      if( 130. < topMass && topMass < 225. ){
+      if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
 	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);

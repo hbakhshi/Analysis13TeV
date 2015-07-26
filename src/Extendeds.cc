@@ -266,13 +266,13 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, Min, Max);
     theH -> SetFillColor  (ccolor[i]);
     theH -> SetLineColor  (kBlack);
-    theH -> SetLineWidth  (2);
+    theH -> SetLineWidth  (1);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
 
     TH1* theHP = NULL;
     TH1* theHN = NULL;
-    if( cnames[i] == "tChannel" || cnames[i] == "sChannel" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
+    if( cnames[i] == "TChannel" || cnames[i] == "VJets" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
       theHP = allSignedHistos[ cnames[i]+"P" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_P" , "", nBins, Min, Max);
       theHN = allSignedHistos[ cnames[i]+"N" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_N" , "", nBins, Min, Max);
     }
@@ -353,13 +353,13 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
     TH1* theH = allHistos[ cnames[i] ] = new TH1D( CutName + "_" + varname+"_"+cnames[i], "", nBins, bins );
     theH -> SetFillColor  (ccolor[i]);
     theH -> SetLineColor  (kBlack);
-    theH -> SetLineWidth  (2);
+    theH -> SetLineWidth  (1);
     theH -> SetMarkerColor(ccolor[i]);
     theH -> SetStats(false);
 
     TH1* theHP = NULL;
     TH1* theHN = NULL;
-    if( cnames[i] == "tChannel" || cnames[i] == "sChannel" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
+    if( cnames[i] == "TChannel" || cnames[i] == "VJets" || cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
       cout << cnames[i] << endl;
       theHP = allSignedHistos[ cnames[i]+"P" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_P" , "", nBins, Min, Max);
       theHN = allSignedHistos[ cnames[i]+"N" ] = new TH1D( CutName + "_" + varname+"_"+cnames[i] + "_N" , "", nBins, Min, Max);
@@ -439,7 +439,7 @@ void ExtendedObjectProperty::SetTree( TTree* tree , TString sampletype, TString 
   theH_N = 0;
   theH_P = 0;
   //cout <<  << endl;
-  if( CurrentSampleSName == "tChannel" || CurrentSampleSName == "sChannel" || CurrentSampleSName == "tbarChannel" || CurrentSampleSName == "tbarS" ){
+  if( CurrentSampleSName == "TChannel" || CurrentSampleSName == "VJets" ) { //|| cnames[i] == "tbarChannel" || cnames[i] == "tbarS" ){
     theH_P = allSignedHistos[ CurrentSampleSName +"P" ] ;
     theH_N = allSignedHistos[ CurrentSampleSName +"N" ] ;
   }
@@ -803,27 +803,29 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   //LumiBox.DrawLatex(0.49,0.943,"CMS Preliminary, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS Preliminary
   //LumiBox.DrawLatex(0.62,0.943,"CMS, #sqrt{s} = 8 TeV, L = "+lumi+" fb^{-1}");//for CMS
 
-   TLatex *   tex = new TLatex(0.955,0.955,"1.00 fb^{-1} (13 TeV)");
+  p_plot ->Draw();
+  gPad->RedrawAxis();
+
+
+   TLatex *   tex = new TLatex(0.955,0.955,"41.0 pb^{-1} (13 TeV)");
    tex->SetNDC();
    tex->SetTextAlign(31);
    tex->SetTextFont(42);
    tex->SetTextSize(0.048);
    tex->SetLineWidth(2);
    tex->Draw();
-      tex = new TLatex(0.8684108,4612.434,"CMS");
+   tex = new TLatex(0.8684108,4612.434,"CMS");
    tex->SetTextAlign(31);
    tex->SetTextSize(0.05956813);
    tex->SetLineWidth(2);
    tex->Draw();
-      tex = new TLatex(1.421617,4179.812,"Preliminary");
+   tex = new TLatex(1.421617,4179.812,"Preliminary");
    tex->SetTextAlign(31);
    tex->SetTextFont(52);
    tex->SetTextSize(0.048);
    tex->SetLineWidth(2);
    tex->Draw();
 
-  p_plot ->Draw();
-  gPad->RedrawAxis();
 
   //if(leg != NULL ){
    leg = new TLegend(0.6129032,0.5035989,0.7983871,0.9156118,NULL,"brNDC");
