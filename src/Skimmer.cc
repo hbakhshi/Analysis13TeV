@@ -45,45 +45,46 @@ int main(int argc, char* argv[]) {
   int counter = 0;
   Long64_t nentries =  chain.GetEntries();
   cout << nentries << endl;
-  return 0;
+  //return 0;
 
   for (Long64_t jentry=0; jentry<nentries;jentry++, counter++) {    
 
-    chain.SetBranchStatus("*", 0 );
-    chain.SetBranchStatus("muons_Pt", 1 );
-    chain.SetBranchStatus("muons_IsTightMuon", 1 );
-    chain.SetBranchStatus("muons_Eta", 1 );
-    chain.SetBranchStatus("muons_size", 1 );
+    // chain.SetBranchStatus("*", 0 );
+    // chain.SetBranchStatus("muons_Pt", 1 );
+    // chain.SetBranchStatus("muons_IsTightMuon", 1 );
+    // chain.SetBranchStatus("muons_Eta", 1 );
+    // chain.SetBranchStatus("muons_size", 1 );
     chain.GetEntry(jentry);
     
     if( lastFileName.compare( chain.GetFile()->GetName() ) != 0 ) {
       lastFileName = chain.GetFile()->GetName() ;
-      cout << "new file : " << lastFileName << endl;
+      //cout << "new file : " << lastFileName << endl;
     }
     
     if ( counter == 10000 ){  
-      fprintf(stdout, "\rProcessed events: %6d of %6d ", jentry + 1, nentries);
+      //fprintf(stdout, "\rProcessed events: %6d of %6d ", jentry + 1, nentries);
       fflush(stdout);
       counter = 0;
     }
 
-    int nTightMuons = 0;
+    cout << fTree.Event_RunNumber << "," <<  int(fTree.Event_EventNumber) << endl;
+    // int nTightMuons = 0;
 
-    for( int imu=0 ; imu < fTree.muons_size ; imu++ ){
-      if( fTree.muons_Pt[imu] > 20.0 &&
-	  fabs(fTree.muons_Eta[imu]) < 2.1 &&
-	  fTree.muons_IsTightMuon[imu] > 0.5 )
-	nTightMuons ++;
-    }
+    // for( int imu=0 ; imu < fTree.muons_size ; imu++ ){
+    //   if( fTree.muons_Pt[imu] > 20.0 &&
+    // 	  fabs(fTree.muons_Eta[imu]) < 2.1 &&
+    // 	  fTree.muons_IsTightMuon[imu] > 0.5 )
+    // 	nTightMuons ++;
+    // }
     
-    if( nTightMuons == 0)
-      continue ;
+    // if( nTightMuons == 0)
+    //   continue ;
 
     
-    chain.SetBranchStatus("*", 1 );
+    // chain.SetBranchStatus("*", 1 );
     chain.GetEntry(jentry);
 
-    newTree->Fill();
+    //newTree->Fill();
     
   }
 

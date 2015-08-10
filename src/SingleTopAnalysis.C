@@ -206,6 +206,10 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
       if( data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v2 > 0.5) )
       	continue;
+      
+      if( !data && !(fTree.HLT_IsoMu20_eta2p1_v1) )
+	continue;
+
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;

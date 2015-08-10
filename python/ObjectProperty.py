@@ -1,4 +1,4 @@
-from ROOT import TDirectory, TH1D, TCanvas, TList, TFile, TAxis, TPad, gPad, THStack, TLatex , TLine, TLegend
+from ROOT import TDirectory, TH1D, TCanvas, TList, TFile, TAxis, TPad, gPad, THStack, TLatex , TLine, TLegend, kRed , kBlue, Double
 import re
 from math import sqrt
 
@@ -34,7 +34,21 @@ class ObjectProperty:
                 self.Canvas = obj
 
 
-    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f}|{1:.2f}" ):
+    def GetFormattedIntegral( self, name , formaT = "{0:.2f}+-{1:.2f}" ):
+        hist = getattr( self , name )
+        err = Double(0)
+        val = hist.IntegralAndError( -1 , 1000 , err)
+        err1 = 0.0
+        err1 += err
+        return formaT.format( val , err )
+    def PrintSummary( self ):
+        print self.SignalName + " | " + self.GetFormattedIntegral( "Signal" )
+        for bkg in self.BKGs:
+            print bkg + " | " + self.GetFormattedIntegral( bkg )
+        print "Sum" + " | " + self.GetFormattedIntegral( "MC" )
+        print "Data | " + self.GetFormattedIntegral("Data") 
+
+    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f}" ):
         hist = getattr( self , name )
         val = hist.GetBinContent( biN )
         err = hist.GetBinError( biN )
@@ -53,7 +67,7 @@ class ObjectProperty:
             line = " | " + cutName + " | " + self.GetFormattedBinContent( "Signal" , bin ) + " | "
             for bkg in self.BKGs :
                 line += self.GetFormattedBinContent(bkg,bin) + " | "
-            line += self.GetFormattedBinContent("MC" , bin) + " | " + self.GetFormattedBinContent("Data" , bin) + "|"
+            line += self.GetFormattedBinContent("MC" , bin , "{0:.2f}$\pm${1:.2f}" ) + " | " + self.GetFormattedBinContent("Data" , bin) + "|"
             data = getattr(self, "Data").GetBinContent( bin )
             dataErr = getattr(self, "Data").GetBinError( bin )
 
@@ -66,7 +80,7 @@ class ObjectProperty:
                 dataOmc = data/mc
                 dataOmcErr = dataOmc*sqrt( dataErr*dataErr/(data*data) + mcErr*mcErr/(mc*mc) )
 
-            line += "{0:.2f}%$\pm$%{1:.2f}".format( dataOmc , dataOmcErr ) + "|"
+            line += "{0:.2f}+-{1:.2f}".format( dataOmc , dataOmcErr ) + "|"
             print line
 
     def GetSumBKGs(self):
@@ -84,9 +98,11 @@ class ObjectProperty:
     def GetStack(self , include_signal = True ):
         self.Stack = THStack( self.Name + "_STack_" + self.CutName , "" ) 
         if include_signal :
+            #self.Signal.Rebin(50)
             self.Stack.Add( self.Signal )
             
         for bkg in self.BKGs :
+            #getattr( self , bkg ).Rebin(50)
             self.Stack.Add( getattr( self , bkg )  )
         return self.Stack
 
@@ -141,6 +157,7 @@ class ObjectProperty:
 
         hstack.Draw("hist")
         self.h2.SetMarkerColor(1)
+        #self.h2.Rebin(50)
         self.h2.Draw("sameE")
 
         TitleBox = TLatex()
@@ -216,20 +233,27 @@ class Draw:
         hist.Draw(opt)
 
 
-# #stau part
-# f = TFile.Open("/home/hbakhshi/Desktop/STau/FakeEstimation_TauMTEff_MuFRTotal_OSSS_Histos.root")
-# dir = f.GetDirectory("Results/TotalTauMTEff200.000000/MT2")
-# dir.ls()
-# estimationres = ObjectProperty( dir , "SUSY_380_1" , ["SUSY"] )
-# estimationres.PrintCutFlowTable()
-# exit()
+#stau part
+f = TFile.Open("/home/hbakhshi/Desktop/STau/CharginoCharginoNewPUTauPt25_Histos.root") #Closure_MuFR_SSOS_Histos.root
+dir = f.GetDirectory("cutflowtable")
+dir.ls()
+estimationres = ObjectProperty( dir , "SUSY_380_0" , [ "SUSY" , "SUSY_180_60" , "SUSY_240_60" , "SUSY_240_80"] ) # , "SUSY_380_1" , "QCD" ,  "ZX" , "Top" , "WW" , "Higgs"  ] )
+estimationres.PrintCutFlowTable()
+exit()
+
+f = TFile.Open("MassPlots/2j1tmoreinfo.root" )
+dir = f.GetDirectory("jpCSV") 
+jpcsv = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+jpcsv.RatioPlot("")
+exit()
 
 # SingleTop part
 # cutflow table
-# f = TFile.Open("../MassPlots/2j1t_correctws_syncedFull3.root")
-# dir = f.GetDirectory("cutflowtable") 
-# cutflowtable = ObjectProperty( dir , "tChannel" , ["SUSY"] )
-# cutflowtable.PrintCutFlowTable()
+f = TFile.Open("MassPlots/spring_dcsonlydata41.root" )
+dir = f.GetDirectory("cutflowtable") 
+cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+cutflowtable.PrintCutFlowTable()
+#exit()
 
 # dirw1 = f.GetDirectory("cutflowtablew1") 
 # cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
@@ -238,25 +262,62 @@ class Draw:
 
 # Wjets extraction
 #f = TFile.Open("./MassPlots/2j1t_correctws_syncedFull2.root")
-f = TFile.Open("./MassPlots/2j1t_PPApp.root")
-dir1 = f.GetDirectory("jPrimeEta" )
-jPrimeEta = ObjectProperty( dir1 , "WJets" , ["SUSY","tChannel_N","tChannel_P","tbarChannel_N","tbarChannel_P","tS_N", "tS_P", "tbarS_N","tbarS_P"] )
-dir2 = f.GetDirectory("jPrimeEtaSB" )
-jPrimeEtaSB = ObjectProperty( dir2 ,"WJets" , ["SUSY","tChannel_N","tChannel_P","tbarChannel_N","tbarChannel_P","tS_N", "tS_P", "tbarS_N","tbarS_P"] )
+# f = TFile.Open("MassPlots/spring_dcsonlydata.root")
+# dir1 = f.GetDirectory("MT")
+# MT = ObjectProperty( dir1 , "TChannel" , ["QCD1" , "SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+# MT.RatioPlot("MT")
+# exit()
 
+f = TFile.Open("MassPlots/spring_dcsonlydata41.root")
+dir1 = f.GetDirectory("jPrimeEta" )
+jPrimeEta = ObjectProperty( dir1 , "VJets" ,  ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+jPrimeEta.PrintSummary()
+dir2 = f.GetDirectory("jPrimeEtaSB" )
+jPrimeEtaSB = ObjectProperty( dir2 ,"VJets" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+jPrimeEtaSB.PrintSummary()
+# a = jPrimeEta.Signal
+# a.Scale( 1.0 / a.Integral() )
+# b = Draw( a )
+
+# jPrimeEtaSB.Signal.DrawNormalized( "SAME" )
+
+exit()
+
+# exit()
 # fqcd = TFile.Open( "/home/hbakhshi/Desktop/ThisMonth/SingleTop/PrePreApproval/qcd.root" )
 # hQCD = fqcd.Get("QCDEtaJ")
 # hQCD.Rebin( 2 )
 # hQCD.Scale( jPrimeEtaSB.QCD.Integral() / hQCD.Integral() )
 # jPrimeEtaSB.QCD = hQCD
 
-fqcd = TFile.Open( "/home/hbakhshi/Documents/Physics/Analysis13TeV/MassPlots/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8_absetajetprime_SB_2j1t.root" )
-hQCD = fqcd.Get("abs_eta_other_Je")
-jPrimeEtaSB.QCD = hQCD
+# fqcd = TFile.Open( "/home/hbakhshi/Documents/Physics/Analysis13TeV/MassPlots/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8_absetajetprime_SB_2j1t.root" )
+# hQCD = fqcd.Get("abs_eta_other_Je")
+# jPrimeEtaSB.QCD = hQCD
+
+jPrimeEtaSB.QCD1.Scale( (15.3+22.3)/(229.3) )
+# dataSB =  jPrimeEtaSB.Data.Integral()
+# MCSB = jPrimeEtaSB.MC.Integral()
+
+# jPrimeEtaSB.QCD1.Scale( dataSB/MCSB )
+# jPrimeEtaSB.Top.Scale( dataSB/MCSB )
+# jPrimeEtaSB.Signal.Scale( dataSB/MCSB )
 
 jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
-jPrimeDD_SB.Scale( jPrimeEta.Signal.Integral()/jPrimeDD_SB.Integral() )
+errDD = Double(0)
+valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
+print errDD
+print valDD
+jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
+jPrimeDD_SB.SetLineColor( kRed )
+jPrimeDD_SB.SetLineWidth( 3 )
+jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
+jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
+jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
 a = Draw( jPrimeDD_SB )
+jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
+jPrimeEta.Signal.SetLineColor( kBlue )
+jPrimeEta.Signal.SetLineWidth( 3 )
+jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
 jPrimeEta.Signal.Draw("same")
 
 # jPrimeEta = ObjectProperty( dir2 , "tChannel" , ["SUSY"] )
