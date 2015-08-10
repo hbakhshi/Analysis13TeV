@@ -1,6 +1,6 @@
 ############################################################################################
 GENERAL
-Path             ///home/hbakhshi/TChannelEA2015/July16/
+Path             ///dataLOCAL/TChannelEA2015/July16/
 #__________________________________________________________________________________________
 # list of samples
 #
@@ -10,6 +10,7 @@ Name		RunII_50ns_SingleMu
 SName		Data
 ShapeName	Data
 File            SingleMuon_good_runs.root
+TreeName	DMTreesDumper/ttDM__noSyst
 Xsection  	1.
 Kfact           1.	
 Lumi            1.
@@ -24,6 +25,7 @@ Name            Signal
 SName           TChannel
 ShapeName       Signal
 File            tchann_top_a.root
+TreeName	ttDM__noSyst
 Xsection        70.3
 Kfact           1.
 Lumi            41.0
@@ -36,6 +38,7 @@ Name            Signal
 SName           TChannel
 ShapeName       Signal
 File            tchan_top_p.root
+TreeName	ttDM__noSyst
 Xsection        44.07048
 Kfact           1.
 Lumi            41.0
@@ -48,6 +51,7 @@ Name            Signal
 SName           TChannel
 ShapeName       Signal
 File            tchan_tbar_p.root
+TreeName	ttDM__noSyst
 Xsection        26.2278
 Kfact           1.
 Lumi            41.0
@@ -61,6 +65,7 @@ Name		QCDMuEnriched
 SName		QCD1
 ShapeName	QCD
 File            qcd*.root
+TreeName	ttDM__noSyst
 Xsection  	381304
 Kfact           1.
 Lumi            41.0
@@ -75,6 +80,7 @@ Name		WJets
 SName		VJets
 ShapeName	WJets
 File            wjets*.root
+TreeName	ttDM__noSyst
 Xsection  	61526.7
 Kfact           1.8
 Lumi            41.0
@@ -87,6 +93,7 @@ Name		DYJets
 SName		VJets
 ShapeName	DY
 File            dy*.root
+TreeName	ttDM__noSyst
 Xsection  	6025.2
 Kfact           1.8
 Lumi            41.0
@@ -100,6 +107,7 @@ Name		SingleTop_tW
 SName		Top
 ShapeName	Top
 File            twchan_t.root
+TreeName	ttDM__noSyst
 Xsection  	35.6
 Kfact           1.	
 Lumi            41.0
@@ -113,6 +121,7 @@ Name		SingleTopbar_tW
 SName		Top
 ShapeName	Top
 File            twchan_tbar.root
+TreeName	ttDM__noSyst
 Xsection  	35.6
 Kfact           1.	
 Lumi            41.0
@@ -125,6 +134,7 @@ Name		TTJets
 SName		Top
 ShapeName	Top
 File            ttbar*.root
+TreeName	ttDM__noSyst
 Xsection  	831.76
 Kfact           1.	
 Lumi            41.0

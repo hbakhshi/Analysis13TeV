@@ -68,12 +68,13 @@ void BaseMassPlotter::loadSamples(const char* filename){
       TString file =fPath+StringValue;
       if(fVerbose > 3)
 	cout<<"my file: "<<file<<endl;
+      
+      IN.getline(buffer, 200, '\n');
+      sscanf(buffer, "TreeName\t%s", StringValue);
+      s.treename = TString(StringValue);
 
+      s.tree = new TChain(s.treename); //(TTree*)f->Get("MassTree");
 
-      if( s.sname == "Data" )
-	s.tree = new TChain("DMTreesDumper/ttDM__noSyst"); //(TTree*)f->Get("MassTree");
-      else
-	s.tree = new TChain("ttDM__noSyst"); //(TTree*)f->Get("MassTree");
       ((TChain*)(s.tree))->Add( file , 0 );
       ((TChain*)(s.tree))->LoadTree(0);
 

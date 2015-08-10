@@ -252,6 +252,7 @@ struct sample{
   TString shapename;
   TString type;
   TFile *file;
+  TString treename;
   TTree *tree;
   float xsection;
   float nevents;

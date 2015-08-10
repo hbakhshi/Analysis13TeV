@@ -75,6 +75,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   alllabels.push_back( "== 2-Jets" );
   alllabels.push_back( "== 1-bJet" );
   alllabels.push_back( "MT >50 GeV" );
+  alllabels.push_back( "j'-bVeto" );
   alllabels.push_back( "mtop" );
   //cout << alllabels.size() << endl;
 
@@ -82,6 +83,8 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   ExtendedObjectProperty cutflowtablew1("" , "cutflowtablew1" , "1" , alllabels.size() ,  0 , alllabels.size() , "2", {}, &alllabels );  
 
   ExtendedObjectProperty nJetsBeforeCut("LeptonVeto" , "nJets" , "1" , 8 , 0 , 8 , "2", {});
+  ExtendedObjectProperty nJets20_47("OneBjet" , "nJets20_47" , "1" , 8 , 0 , 8 , "2", {});
+  ExtendedObjectProperty nJets20_24("OneBjet" , "nJets20_24" , "1" , 8 , 0 , 8 , "2", {});
   ExtendedObjectProperty nbJets("Jets" , "nbJets" , "1" , 3 , 0 , 3 , "2", {});
 
   ExtendedObjectProperty MTBeforeCut("OneBjetNoMT" , "MT" , "1" , 30 , 0 , 300 , "2", {});
@@ -95,12 +98,39 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   ExtendedObjectProperty METOneB("OneBjet" , "MET" , "1" , 40 , 0 , 400 , "2", {});
   ExtendedObjectProperty bPtOneB("OneBjet" , "bPt" , "1" , 30 , 30 , 330 , "2", {});
   ExtendedObjectProperty bEtaOneB("OneBjet" , "bEta" , "1" , 10 , 0 , 5.0 , "2", {});
+  ExtendedObjectProperty nonbCSV("OneBjet" , "jpCSV" , "1" , 20 , 0 , 1.0 , "2", {});
+
+  ExtendedObjectProperty nLbjets1EJ24("1EJ24" , "nLbJets_1EJ24" , "1" , 2 , 0 , 2  , "2", {});
+  ExtendedObjectProperty nTbjets1EJ24("1EJ24" , "nTbJets_1EJ24" , "1" , 2 , 0 , 2  , "2", {});
+
+  ExtendedObjectProperty nLbjets2EJ24("2EJ24" , "nLbJets_2EJ24" , "1" , 3 , 0 , 3  , "2", {});
+  ExtendedObjectProperty nTbjets2EJ24("2EJ24" , "nTbJets_2EJ24" , "1" , 3 , 0 , 3  , "2", {});
+
+  ExtendedObjectProperty nLbjets3EJ24("3EJ24" , "nLbJets_3EJ24" , "1" , 4 , 0 , 4  , "2", {});
+  ExtendedObjectProperty nTbjets3EJ24("3EJ24" , "nTbJets_3EJ24" , "1" , 4 , 0 , 4  , "2", {});
+
+  ExtendedObjectProperty nLbjets4EJ24("4EJ24" , "nLbJets_4EJ24" , "1" , 5 , 0 , 5  , "2", {});
+  ExtendedObjectProperty nTbjets4EJ24("4EJ24" , "nTbJets_4EJ24" , "1" , 5 , 0 , 5  , "2", {});
+
+  ExtendedObjectProperty nLbjets1EJ47("1EJ47" , "nLbJets_1EJ47" , "1" , 2 , 0 , 2  , "2", {});
+  ExtendedObjectProperty nTbjets1EJ47("1EJ47" , "nTbJets_1EJ47" , "1" , 2 , 0 , 2  , "2", {});
+
+  ExtendedObjectProperty nLbjets2EJ47("2EJ47" , "nLbJets_2EJ47" , "1" , 3 , 0 , 3  , "2", {});
+  ExtendedObjectProperty nTbjets2EJ47("2EJ47" , "nTbJets_2EJ47" , "1" , 3 , 0 , 3  , "2", {});
+
+  ExtendedObjectProperty nLbjets3EJ47("3EJ47" , "nLbJets_3EJ47" , "1" , 4 , 0 , 4  , "2", {});
+  ExtendedObjectProperty nTbjets3EJ47("3EJ47" , "nTbJets_3EJ47" , "1" , 4 , 0 , 4  , "2", {});
+
+  ExtendedObjectProperty nLbjets4EJ47("4EJ47" , "nLbJets_4EJ47" , "1" , 5 , 0 , 5  , "2", {});
+  ExtendedObjectProperty nTbjets4EJ47("4EJ47" , "nTbJets_4EJ47" , "1" , 5 , 0 , 5  , "2", {});
 
   TH1* hTopMass = new TH1D("hTopMass" , "Top Mass" , 500 , 0 , 500 );
   TH1* hTopMassEtaJ = new TH2D( "hTopMassEtaJ" , "Top Mass" , 500 , 0 , 500 , 20 , 0 , 5.0 );
 
-  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB};
+  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47};
 
+  std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24
+							       ,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
   nextcut.Reset();
 
   for(int ii = 0; ii < fSamples.size(); ii++){
@@ -149,6 +179,8 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if( lastFileName.compare( ((TChain*)Sample.tree)->GetFile()->GetName() ) != 0 ) {
 	for(auto prop : allProps)
 	  prop->SetTree( Sample.tree , Sample.type, Sample.sname );
+	for(auto prop2 : JbJOptimizationProps ) 
+	  prop2->SetTree( Sample.tree , Sample.type, Sample.sname );
 
 	nextcut.Reset();
 	while( objcut = nextcut() ){
@@ -304,6 +336,13 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       int bjIndex = -1;
       int bj2Index = -1;
       int jprimeIndex ; 
+
+      int nJetsPt20_47 = 0;
+
+      int nJetsPt20_24 = 0;
+      int nLbJetsPt20 = 0;
+      int nTbJetsPt20 = 0;
+
       TLorentzVector muon;
       muon.SetPtEtaPhiE( fTree.muons_Pt[tightMuIndex] , fTree.muons_Eta[tightMuIndex] , fTree.muons_Phi[tightMuIndex] , fTree.muons_E[tightMuIndex] );
       if( muon.Energy() == 0.0 )
@@ -312,7 +351,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	//if( fTree.jetsAK4_Pt[jid]>20)
 	//cout << "  " << jid << " - " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] << "-" << fTree.jetsAK4_numberOfDaughters[jid] << "-" <<  fTree.jetsAK4_MuonEnergy[jid] << "-" <<  fTree.jetsAK4_chargedMultiplicity[jid] << "-" <<  fTree.jetsAK4_chargedHadronEnergy[jid] << "-" <<  fTree.jetsAK4_chargedEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralHadronEnergy[jid] << "-" <<  fTree.jetsAK4_E[jid] << "-" <<  fTree.jetsAK4_jecFactor0[jid]  << endl ;
 
-      	if( fTree.jetsAK4_Pt[jid] > 40 &&
+      	if( fTree.jetsAK4_Pt[jid] > 20 &&
 	    fabs( fTree.jetsAK4_Eta[jid] ) < 4.7 &&
 	    fTree.jetsAK4_PassesID[jid] > 0.5  // IsLoose for Fall14, PassesID for SPRING samples ; 	    //fTree.jetsAK4_PassesDRtight[jid] > 0.5 
 	    ){
@@ -320,6 +359,19 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  jet.SetPtEtaPhiE( fTree.jetsAK4_Pt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_E[jid] );
 	  double DR = muon.DeltaR( jet );
 	  if ( DR >= 0.3 ){
+
+	    if( fTree.jetsAK4_Pt[jid] < 40 ){
+	      nJetsPt20_47 ++ ;
+	      if( fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
+		nJetsPt20_24 ++;
+		if( fTree.jetsAK4_CSV[jid] > 0.97 )
+		  nTbJetsPt20++;
+		else if( fTree.jetsAK4_CSV[jid] > 0.605 )
+		  nLbJetsPt20++;
+	      }
+	      
+	      continue;
+	    }	    
 	    nJets++;
 	    if( nJets == 1 )
 	      j1index = jid ;
@@ -369,6 +421,53 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
 
+      nonbCSV.Fill( fTree.jetsAK4_CSV[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+
+//       if( fTree.jetsAK4_CSV[jprimeIndex] > 0.605 )
+// 	continue;
+
+      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      cutindex ++ ;
+
+      nJets20_47.Fill( nJetsPt20_47 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      nJets20_24.Fill( nJetsPt20_24 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+
+      if(nJetsPt20_24 < 2){
+	nLbjets1EJ24.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets1EJ24.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_24 < 3){
+	nLbjets2EJ24.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets2EJ24.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_24 < 4){
+	nLbjets3EJ24.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets3EJ24.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_24 < 5){
+	nLbjets4EJ24.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets4EJ24.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+
+      if(nJetsPt20_47 < 2){
+	nLbjets1EJ47.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets1EJ47.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_47 < 3){
+	nLbjets2EJ47.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets2EJ47.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_47 < 4){
+	nLbjets3EJ47.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets3EJ47.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+      if(nJetsPt20_47 < 5){
+	nLbjets4EJ47.Fill( nLbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	nTbjets4EJ47.Fill( nTbJetsPt20 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+      }
+
+
       if( NUMBEROFBJETS == 2 )
 	if( fTree.jetsAK4_CSV[bj2Index] > fTree.jetsAK4_CSV[bjIndex] )
 	  std::swap( bj2Index , bjIndex );
@@ -413,8 +512,28 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
   TFile *theFile = new TFile(fileName.Data(), "RECREATE");
 
+  nonbCSV.CalcSig( 0 , 0 , -1 , 0 ) ; 
+  nonbCSV.CalcSig( 0 , 4 , -1 , 0.1); 
+  nonbCSV.CalcSig( 0 , 2 , -1 , 0 ) ; 
+
+  nJets20_24.CalcSig( 0 , 0 , -1 , 0 ) ; 
+  nJets20_24.CalcSig( 0 , 4 , -1 , 0.1 ) ; 
+  nJets20_24.CalcSig( 0 , 2 , -1 , 0 ) ; 
+  nJets20_47.CalcSig( 0 , 0 , -1 , 0 ) ; 
+  nJets20_47.CalcSig( 0 , 4 , -1 , 0.1 ) ; 
+  nJets20_47.CalcSig( 0 , 2 , -1 , 0 ) ; 
   for(auto prop : allProps)
     prop->Write( theFile , 1000  );
+
+  TDirectory* dir2 = theFile->mkdir("JbJOptimizationProps");
+  dir2->cd();
+
+  for(auto prop2 : JbJOptimizationProps){
+    prop2->CalcSig( 0 , 0 , -1 , 0 ) ; 
+    prop2->CalcSig( 0 , 4 , -1 , 0.1 ) ; 
+    prop2->CalcSig( 0 , 2 , -1 , 0 ) ; 
+    prop2->Write( dir2 , 1000  );
+  }
 
   theFile->cd();
   hTopMass->Write();

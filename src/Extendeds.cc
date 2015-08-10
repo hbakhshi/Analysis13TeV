@@ -31,15 +31,18 @@ void ExtendedObjectProperty::makeCard(double N, double S, double dS, double B, d
 void ExtendedObjectProperty::CalcSig(int LowerCut , int type,  int SUSCat , double sys  ) {
 
   TString cutType = LowerCut==0? "upperCut" : "lowerCut" ;
-  TH1 *hBkg = allHistos["MC"];
+  TH1 *hBkg = (TH1*)(allHistos["MC"]->Clone("tmpBKG"));
+  hBkg = allHistos["Top"] ;
   TString xtitle = Name;
   //Float_t  x[nBins], y[nBins];
 
-  TString SignalHistoName = "SUSY";
-  if( SUSCat > -1 && SUSCat < int(SUSYNames.size()) )
-    SignalHistoName += "_" + SUSYNames[SUSCat] ;
+  TString SignalHistoName = "TChannel";
+//   if( SUSCat > -1 && SUSCat < int(SUSYNames.size()) )
+//     SignalHistoName += "_" + SUSYNames[SUSCat] ;
 
   TH1 *hSgn = allHistos[SignalHistoName];
+
+  //hBkg->Add( hSgn , -1 );
 
     int nbins = hSgn->GetXaxis()->GetNbins();
     float *x = new float[nbins];
@@ -51,13 +54,15 @@ void ExtendedObjectProperty::CalcSig(int LowerCut , int type,  int SUSCat , doub
 
     for (int i = 1; i <= nbins; i++) {
 
-        x[i - 1] = hSgn->GetBinLowEdge(i);
-        ex[i - 1] = hSgn->GetBinWidth(i);
+      x[i - 1] = hSgn->GetBinLowEdge(i) ;
+      if(cutType != "lowerCut")
+	x[i-1] += hSgn->GetBinWidth(i);
+      ex[i - 1] = 0 ; //hSgn->GetBinWidth(i)/1.1;
 
         double s = (cutType == "lowerCut") ? hSgn->Integral(i, nbins + 1) : hSgn->Integral(0, i);
-        double ds = sqrt(s) + s * sys;
+        double ds = sqrt(20*s) + s * sys;
         double b = (cutType == "lowerCut") ? hBkg->Integral(i, nbins + 1) : hBkg->Integral(0, i);
-        double db = sqrt(b) + b * sys;
+        double db = sqrt(20*b) + b * sys;
 
 
         if (b == 0 || s == 0) {
@@ -67,15 +72,23 @@ void ExtendedObjectProperty::CalcSig(int LowerCut , int type,  int SUSCat , doub
             if (type == 0) {
                 y[i - 1] = s / sqrt(b);
                 ey[i - 1] = y[i - 1] * (ds / s + db / (2 * b));
+		ey[ i -1 ]  = 0;
             }
             if (type == 1) {
                 y[i - 1] = s / sqrt(s + b);
                 ey[i - 1] = y[i - 1] * (ds / s + (db + ds) / (2 * (b + s)));
+		ey[ i -1 ]  = 0;
             }
             if (type == 2) {
-                y[i - 1] = s / b;
-                ey[i - 1] = y[i - 1] * (ds / s + db / b);
+	      y[i - 1] = s / b;
+	      ey[i - 1] = y[i - 1] * (ds / s + db / b);
+	      ey[ i -1 ]  = 0;
             }
+	    if(type == 4){
+	      y[i - 1] = s / sqrt(b+sys*b*sys*b);
+	      //ey[i - 1] = y[i - 1] * (ds / s + db / b);
+	      ey[ i -1 ]  = 0;
+	    }
             if (type == 3) {
 
                 makeCard(b, s, sys, b, sys, "datacard");
@@ -115,7 +128,7 @@ void ExtendedObjectProperty::CalcSig(int LowerCut , int type,  int SUSCat , doub
         }
     }
 
-    TGraphAsymmErrors *sig = new TGraphAsymmErrors(nbins, x, y, ex, ey);
+    TGraphAsymmErrors *sig = new TGraphAsymmErrors(nbins, x, y, ex, ex , ey , ey);
     if (type == 3) sig = new TGraphAsymmErrors(nbins, x, y, ex, ex, eym, eyp);
 
     TString nnn = Name + "_" + std::to_string(LowerCut) + "_" + std::to_string(type) + "_" + SignalHistoName + "_" + CutName ;
@@ -132,6 +145,7 @@ void ExtendedObjectProperty::CalcSig(int LowerCut , int type,  int SUSCat , doub
     if (type == 1) sig->GetYaxis()->SetTitle("S/#sqrt{S+B}");
     if (type == 2) sig->GetYaxis()->SetTitle("S/B");
     if (type == 3) sig->GetYaxis()->SetTitle("signal strength (r)");
+    if (type == 4) sig->GetYaxis()->SetTitle("S/#sqrt{B+(#delta B)^{2} }");
 
     AllSignificances.push_back( sig );
 
