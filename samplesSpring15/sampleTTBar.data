@@ -1,0 +1,20 @@
+############################################################################################
+GENERAL
+Path             ///home/hbakhshi/TChannelEA2015/July16/
+#__________________________________________________________________________________________
+# list of samples
+#
+
+
+SAMPLE
+Name		TTJets
+SName		Top
+ShapeName	Top
+File            ttbar*.root
+Xsection  	831.76
+Kfact           1.	
+Lumi            41.0
+Type            mc
+Color		600
+NEvents		19665194
+
