@@ -507,11 +507,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
       if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
+#ifdef SingleTopTreeLHEWeights_h
 	if( Sample.name == "WJets" ){
 	  for(int i=0;i<9;i++)
 	    hEtajWScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentLHEWeights[i] ) );
-	  
 	}
+#endif
 	
 	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
@@ -557,6 +558,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   for(auto prop : allProps)
     prop->Write( theFile , 1000  );
 
+#ifdef SingleTopTreeLHEWeights_h
   TDirectory* dirWScales = theFile->mkdir("WJScales");
   dirWScales->cd();
   for(int i=0;i<9;i++){
@@ -564,6 +566,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     hEtajWScales[i]->Scale( WScalesTotal[0]/WScalesTotal[i] );
     hEtajWScales[i]->Write();
   }
+#endif
 
   TDirectory* dir2 = theFile->mkdir("JbJOptimizationProps");
   dir2->cd();
