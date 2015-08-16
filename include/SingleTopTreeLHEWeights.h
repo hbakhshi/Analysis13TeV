@@ -7,6 +7,7 @@
 
 #ifndef SingleTopTree_h
 #define SingleTopTree_h
+#define SingleTopTreeLHEWeights_h
 
 #include <TROOT.h>
 #include <TChain.h>

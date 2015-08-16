@@ -217,6 +217,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	//   cout << fTree.Event_LHEWeightSign << endl;
       }
 
+      #ifdef SingleTopTreeLHEWeights_h
       if( Sample.name == "WJets" ){
 	CurrentLHEWeights[0] = fTree.Event_LHEWeight /fabs(fTree.Event_LHEWeight) ;
 	CurrentLHEWeights[1] = fTree.Event_LHEWeight1/fabs(fTree.Event_LHEWeight) ;
@@ -231,7 +232,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	for(int i = 0 ; i<9 ;i++)
 	  WScalesTotal[i] += CurrentLHEWeights[i];
       }
-
+      #endif
       
       double cutindex = 0.5;
       bool pass=true;
