@@ -584,6 +584,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 }
 //_____________________________________________________________________________________
 int main(int argc, char* argv[]) {
+#ifdef SingleTopTreeLHEWeights_h
+  cout << "SingleTopTreeLHEWeights_h" << endl;
+#endif
   TString execname = TString(argv[0]);
   // Default options
   TString outputfile = "EleTau_Signal_METBJetsCuts"; 

@@ -10,7 +10,7 @@ Name		WJets
 SName		VJets
 ShapeName	WJets
 File            treesTest_NewSmallNoChange_*.root
-TreeName	ttDM__noSyst
+TreeName	DMTreesDumper/ttDM__noSyst
 Xsection  	61526.7
 Kfact           1
 Lumi            41.0

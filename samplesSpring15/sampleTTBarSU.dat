@@ -11,7 +11,7 @@ Name		TTJets
 SName		Top
 ShapeName	Top
 File            TT_scaleup.root
-TreeName	ttDM__noSyst
+TreeName	DMTreesDumper/ttDM__noSyst
 Xsection  	831.76
 Kfact           1.	
 Lumi            41.0
