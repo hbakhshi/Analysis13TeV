@@ -1,21 +1,21 @@
 ############################################################################################
 GENERAL
-Path             ///dataLOCAL/TChannelEA2015/July16/
+Path             ///dataLOCAL/TChannelEA2015/July16/syst/
 #__________________________________________________________________________________________
 # list of samples
 #
 
+
 SAMPLE
-Name		TTJets
-SName		Top
-ShapeName	Top
-File            ttbar*.root
-TreeName	ttDM__noSyst
-Xsection  	831.76
-Kfact           1.	
+Name		WJets
+SName		VJets
+ShapeName	WJets
+File            wjetsJesDown.root
+TreeName	ttDM__jes__down
+Xsection  	61526.7
+Kfact           1.8
 Lumi            41.0
 Type            mc
-Color		600
-NEvents		19665194
-
+Color		417
+NEvents		16476437
 

@@ -5,17 +5,17 @@ Path             ///dataLOCAL/TChannelEA2015/July16/
 # list of samples
 #
 
+
 SAMPLE
-Name		TTJets
-SName		Top
-ShapeName	Top
-File            ttbar*.root
+Name		WJets
+SName		VJets
+ShapeName	WJets
+File            wjets*.root
 TreeName	ttDM__noSyst
-Xsection  	831.76
-Kfact           1.	
+Xsection  	61526.7
+Kfact           1.8
 Lumi            41.0
 Type            mc
-Color		600
-NEvents		19665194
-
+Color		417
+NEvents		16476437
 
