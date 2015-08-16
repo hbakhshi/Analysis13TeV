@@ -1,0 +1,21 @@
+############################################################################################
+GENERAL
+Path             ///cmsdata2/hbakhshi/tchannel_ea15/samples_17Aug/ttbar_scaledown/
+#__________________________________________________________________________________________
+# list of samples
+#
+
+
+SAMPLE
+Name		TTJets
+SName		Top
+ShapeName	Top
+File            TT_scaledown.root
+TreeName	ttDM__noSyst
+Xsection  	831.76
+Kfact           1.	
+Lumi            41.0
+Type            mc
+Color		600
+NEvents		1999197
+

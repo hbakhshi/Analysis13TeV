@@ -34,7 +34,7 @@ class ObjectProperty:
                 self.Canvas = obj
 
 
-    def GetFormattedIntegral( self, name , formaT = "{0:.2f}+-{1:.2f}" ):
+    def GetFormattedIntegral( self, name , formaT = "{0:.2f}" ): #+-{1:.2f}" ):
         hist = getattr( self , name )
         err = Double(0)
         val = hist.IntegralAndError( -1 , 1000 , err)
@@ -234,25 +234,25 @@ class Draw:
 
 
 #stau part
-f = TFile.Open("/home/hbakhshi/Desktop/STau/CharginoCharginoNewPUTauPt25_Histos.root") #Closure_MuFR_SSOS_Histos.root
-dir = f.GetDirectory("cutflowtable")
-dir.ls()
-estimationres = ObjectProperty( dir , "SUSY_380_0" , [ "SUSY" , "SUSY_180_60" , "SUSY_240_60" , "SUSY_240_80"] ) # , "SUSY_380_1" , "QCD" ,  "ZX" , "Top" , "WW" , "Higgs"  ] )
-estimationres.PrintCutFlowTable()
-exit()
+# f = TFile.Open("/home/hbakhshi/Desktop/STau/CharginoCharginoNewPUTauPt25_Histos.root") #Closure_MuFR_SSOS_Histos.root
+# dir = f.GetDirectory("cutflowtable")
+# dir.ls()
+# estimationres = ObjectProperty( dir , "SUSY_380_0" , [ "SUSY" , "SUSY_180_60" , "SUSY_240_60" , "SUSY_240_80"] ) # , "SUSY_380_1" , "QCD" ,  "ZX" , "Top" , "WW" , "Higgs"  ] )
+# estimationres.PrintCutFlowTable()
+# exit()
 
-f = TFile.Open("MassPlots/2j1tmoreinfo.root" )
-dir = f.GetDirectory("jpCSV") 
-jpcsv = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-jpcsv.RatioPlot("")
-exit()
+# f = TFile.Open("MassPlots/2j1tmoreinfo.root" )
+# dir = f.GetDirectory("jpCSV") 
+# jpcsv = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+# jpcsv.RatioPlot("")
+# exit()
 
 # SingleTop part
 # cutflow table
-f = TFile.Open("MassPlots/spring_dcsonlydata41.root" )
-dir = f.GetDirectory("cutflowtable") 
-cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-cutflowtable.PrintCutFlowTable()
+# f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1.root")
+# dir = f.GetDirectory("cutflowtable") 
+# cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+# cutflowtable.PrintCutFlowTable()
 #exit()
 
 # dirw1 = f.GetDirectory("cutflowtablew1") 
@@ -268,13 +268,34 @@ cutflowtable.PrintCutFlowTable()
 # MT.RatioPlot("MT")
 # exit()
 
-f = TFile.Open("MassPlots/spring_dcsonlydata41.root")
+f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1.root")
 dir1 = f.GetDirectory("jPrimeEta" )
 jPrimeEta = ObjectProperty( dir1 , "VJets" ,  ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+jPrimeEta.QCD1.Scale( 5.0/jPrimeEta.QCD1.Integral() )
 jPrimeEta.PrintSummary()
 dir2 = f.GetDirectory("jPrimeEtaSB" )
 jPrimeEtaSB = ObjectProperty( dir2 ,"VJets" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+jPrimeEtaSB.QCD1.Scale( 1.0/jPrimeEtaSB.QCD1.Integral() )
 jPrimeEtaSB.PrintSummary()
+
+jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
+errDD = Double(0)
+valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
+print errDD
+print valDD
+jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
+jPrimeDD_SB.SetLineColor( kRed )
+jPrimeDD_SB.SetLineWidth( 3 )
+jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
+jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
+jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
+a = Draw( jPrimeDD_SB )
+jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
+jPrimeEta.Signal.SetLineColor( kBlue )
+jPrimeEta.Signal.SetLineWidth( 3 )
+jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
+jPrimeEta.Signal.Draw("same")
+
 # a = jPrimeEta.Signal
 # a.Scale( 1.0 / a.Integral() )
 # b = Draw( a )

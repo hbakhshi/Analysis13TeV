@@ -127,10 +127,19 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   TH1* hTopMass = new TH1D("hTopMass" , "Top Mass" , 500 , 0 , 500 );
   TH1* hTopMassEtaJ = new TH2D( "hTopMassEtaJ" , "Top Mass" , 500 , 0 , 500 , 20 , 0 , 5.0 );
 
+  TH1* hEtajWScales[9];
+  double WScalesTotal[9];
+  double CurrentLHEWeights[9];
+  for(int i=0; i < 8 ; i++){
+    TString s(to_string(i));
+    hEtajWScales[i] = new TH1D( TString("hEtaJp_")+s , "" , 10 , 0 , 5.0 );
+    WScalesTotal[i] = 0 ;
+    CurrentLHEWeights[i] = 0;
+  }
+
   std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47};
 
-  std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24
-							       ,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
+  std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
   nextcut.Reset();
 
   for(int ii = 0; ii < fSamples.size(); ii++){
@@ -207,6 +216,22 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	// if(fTree.Event_LHEWeightSign < 0.0)
 	//   cout << fTree.Event_LHEWeightSign << endl;
       }
+
+      if( Sample.name == "WJets" ){
+	CurrentLHEWeights[0] = fTree.Event_LHEWeight /fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[1] = fTree.Event_LHEWeight1/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[2] = fTree.Event_LHEWeight2/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[3] = fTree.Event_LHEWeight3/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[4] = fTree.Event_LHEWeight4/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[5] = fTree.Event_LHEWeight5/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[6] = fTree.Event_LHEWeight6/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[7] = fTree.Event_LHEWeight7/fabs(fTree.Event_LHEWeight) ;
+	CurrentLHEWeights[8] = fTree.Event_LHEWeight8/fabs(fTree.Event_LHEWeight) ;
+	
+	for(int i = 0 ; i<9 ;i++)
+	  WScalesTotal[i] += CurrentLHEWeights[i];
+      }
+
       
       double cutindex = 0.5;
       bool pass=true;
@@ -481,6 +506,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
       if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
+	if( Sample.name == "WJets" ){
+	  for(int i=0;i<9;i++)
+	    hEtajWScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentLHEWeights[i] ) );
+	  
+	}
+	
 	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
@@ -524,6 +555,14 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   nJets20_47.CalcSig( 0 , 2 , -1 , 0 ) ; 
   for(auto prop : allProps)
     prop->Write( theFile , 1000  );
+
+  TDirectory* dirWScales = theFile->mkdir("WJScales");
+  dirWScales->cd();
+  for(int i=0;i<9;i++){
+    cout << "WScalesTotal[i]" << WScalesTotal[i] << "," << WScalesTotal[0]/WScalesTotal[i] << endl;
+    hEtajWScales[i]->Scale( WScalesTotal[0]/WScalesTotal[i] );
+    hEtajWScales[i]->Write();
+  }
 
   TDirectory* dir2 = theFile->mkdir("JbJOptimizationProps");
   dir2->cd();
