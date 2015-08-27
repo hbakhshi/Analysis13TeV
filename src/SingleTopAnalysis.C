@@ -94,6 +94,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   ExtendedObjectProperty jprimeEtaSB("SideBand" , "jPrimeEtaSB" , "1" , 10 , 0 , 5.0 , "2", {});
   ExtendedObjectProperty jprimePt("OneBjet" , "jPrimePt" , "1" , 30 , 30 , 330 , "2", {});
   ExtendedObjectProperty muPtOneB("OneBjet" , "muPt" , "1" , 40 , 30 , 430 , "2", {});
+  ExtendedObjectProperty muCharge("OneBjet" , "muCharge" , "1" , 40 , -2 , 2 , "2", {});
   ExtendedObjectProperty muEtaOneB("OneBjet" , "muEta" , "1" , 10 , 0 , 2.5 , "2", {});
   ExtendedObjectProperty METOneB("OneBjet" , "MET" , "1" , 40 , 0 , 400 , "2", {});
   ExtendedObjectProperty bPtOneB("OneBjet" , "bPt" , "1" , 30 , 30 , 330 , "2", {});
@@ -137,7 +138,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     CurrentLHEWeights[i] = 0;
   }
 
-  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47};
+  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muCharge, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47};
 
   std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
   nextcut.Reset();
@@ -517,6 +518,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	muCharge.Fill( fTree.muons_Charge[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muEtaOneB.Fill( fabs(fTree.muons_Eta[tightMuIndex]) , weight , EventsIsPSeudoData < fabs(weight), isiso );
 	METOneB.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	bPtOneB.Fill( fTree.jetsAK4_Pt[bjIndex] , weight , EventsIsPSeudoData < fabs(weight), isiso );
@@ -555,6 +557,14 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   nJets20_47.CalcSig( 0 , 0 , -1 , 0 ) ; 
   nJets20_47.CalcSig( 0 , 4 , -1 , 0.1 ) ; 
   nJets20_47.CalcSig( 0 , 2 , -1 , 0 ) ; 
+
+  muCharge.CalcSig( 0 , 0 , -1 , 0 ) ; 
+  muCharge.CalcSig( 0 , 4 , -1 , 0.1 ) ; 
+  muCharge.CalcSig( 0 , 2 , -1 , 0 ) ; 
+  muCharge.CalcSig( 1 , 0 , -1 , 0 ) ; 
+  muCharge.CalcSig( 1 , 4 , -1 , 0.1 ) ; 
+  muCharge.CalcSig( 1 , 2 , -1 , 0 ) ; 
+
   for(auto prop : allProps)
     prop->Write( theFile , 1000  );
 

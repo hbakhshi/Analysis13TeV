@@ -1,6 +1,6 @@
 ############################################################################################
 GENERAL
-Path             ///dataLOCAL/TChannelEA2015/July16/
+Path             ///dataLOCAL/dataLOCAL/TChannelEA2015/July16/
 #__________________________________________________________________________________________
 # list of samples
 #
@@ -82,7 +82,7 @@ ShapeName	WJets
 File            wjets*.root
 TreeName	ttDM__noSyst
 Xsection  	61526.7
-Kfact           1.8
+Kfact           1.
 Lumi            41.0
 Type            mc
 Color		417
@@ -95,7 +95,7 @@ ShapeName	DY
 File            dy*.root
 TreeName	ttDM__noSyst
 Xsection  	6025.2
-Kfact           1.8
+Kfact           1.
 Lumi            41.0
 Type            mc
 Color		419
