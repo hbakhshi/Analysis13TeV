@@ -141,7 +141,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   TH1* hEtajWScales[9];
   double WScalesTotal[9];
   double CurrentLHEWeights[9];
-  for(int i=0; i < 8 ; i++){
+  for(int i=0; i < 9; i++){
     TString s(to_string(i));
     hEtajWScales[i] = new TH1D( TString("hEtaJp_")+s , "" , 10 , 0 , 5.0 );
     WScalesTotal[i] = 0 ;
