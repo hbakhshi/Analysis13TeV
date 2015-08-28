@@ -236,122 +236,115 @@ class Draw:
         hist.Draw(opt)
 
 
-#stau part
-# f = TFile.Open("/home/hbakhshi/Desktop/STau/CharginoCharginoNewPUTauPt25_Histos.root") #Closure_MuFR_SSOS_Histos.root
-# dir = f.GetDirectory("cutflowtable")
-# dir.ls()
-# estimationres = ObjectProperty( dir , "SUSY_380_0" , [ "SUSY" , "SUSY_180_60" , "SUSY_240_60" , "SUSY_240_80"] ) # , "SUSY_380_1" , "QCD" ,  "ZX" , "Top" , "WW" , "Higgs"  ] )
-# estimationres.PrintCutFlowTable()
-# exit()
 
-# f = TFile.Open("MassPlots/2j1tmoreinfo.root" )
-# dir = f.GetDirectory("jpCSV") 
-# jpcsv = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-# jpcsv.RatioPlot("")
-# exit()
+def STauCutFlow():
+    f = TFile.Open("/home/hbakhshi/Desktop/STau/CharginoCharginoNewPUTauPt25_Histos.root") #Closure_MuFR_SSOS_Histos.root
+    dir = f.GetDirectory("cutflowtable")
+    dir.ls()
+    estimationres = ObjectProperty( dir , "SUSY_380_0" , [ "SUSY" , "SUSY_180_60" , "SUSY_240_60" , "SUSY_240_80"] ) # , "SUSY_380_1" , "QCD" ,  "ZX" , "Top" , "WW" , "Higgs"  ] )
+    estimationres.PrintCutFlowTable()
 
-# SingleTop part
-# cutflow table
-f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1NewCFT.root")
-dir = f.GetDirectory("cutflowtable") 
-cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-cutflowtable.Data.SetBinContent(1, 334639)
-cutflowtable.Data.SetBinContent(2, 11537)
-cutflowtable.Data.SetBinContent(3, 583)
-cutflowtable.Data.SetBinContent(4, 376)
-cutflowtable.Data.SetBinContent(5, 231)
-cutflowtable.PrintCutFlowTable()
-exit()
 
-# dirw1 = f.GetDirectory("cutflowtablew1") 
-# cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
-# cutflowtablew1.PrintCutFlowTable()
-# exit()
+def TChannel_JPCSV():
+    f = TFile.Open("MassPlots/2j1tmoreinfo.root" )
+    dir = f.GetDirectory("jpCSV") 
+    jpcsv = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+    jpcsv.RatioPlot("")
 
-# Wjets extraction
-#f = TFile.Open("./MassPlots/2j1t_correctws_syncedFull2.root")
-# f = TFile.Open("MassPlots/spring_dcsonlydata.root")
-# dir1 = f.GetDirectory("MT")
-# MT = ObjectProperty( dir1 , "TChannel" , ["QCD1" , "SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-# MT.RatioPlot("MT")
-# exit()
 
-f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1.root")
-dir1 = f.GetDirectory("jPrimeEta" )
-jPrimeEta = ObjectProperty( dir1 , "VJets" ,  ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-jPrimeEta.QCD1.Scale( 5.0/jPrimeEta.QCD1.Integral() )
-jPrimeEta.PrintSummary()
-dir2 = f.GetDirectory("jPrimeEtaSB" )
-jPrimeEtaSB = ObjectProperty( dir2 ,"VJets" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-jPrimeEtaSB.QCD1.Scale( 1.0/jPrimeEtaSB.QCD1.Integral() )
-jPrimeEtaSB.PrintSummary()
+def TChannel_CutFlow():
+    f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1NewCFT.root")
+    dir = f.GetDirectory("cutflowtable") 
+    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+    cutflowtable.Data.SetBinContent(1, 334639)
+    cutflowtable.Data.SetBinContent(2, 11537)
+    cutflowtable.Data.SetBinContent(3, 583)
+    cutflowtable.Data.SetBinContent(4, 376)
+    cutflowtable.Data.SetBinContent(5, 231)
+    cutflowtable.PrintCutFlowTable()
 
-jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
-errDD = Double(0)
-valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
-print errDD
-print valDD
-jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
-jPrimeDD_SB.SetLineColor( kRed )
-jPrimeDD_SB.SetLineWidth( 3 )
-jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
-jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
-jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
-a = Draw( jPrimeDD_SB )
-jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
-jPrimeEta.Signal.SetLineColor( kBlue )
-jPrimeEta.Signal.SetLineWidth( 3 )
-jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
-jPrimeEta.Signal.Draw("same")
+def TChannel_CutFlowW1():
+    dirw1 = f.GetDirectory("cutflowtablew1") 
+    cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
+    cutflowtablew1.PrintCutFlowTable()
 
-# a = jPrimeEta.Signal
-# a.Scale( 1.0 / a.Integral() )
-# b = Draw( a )
 
-# jPrimeEtaSB.Signal.DrawNormalized( "SAME" )
+def TChannel_Plotter():
+    f = TFile.Open("./MassPlots/2j1t_correctws_syncedFull2.root")
+    # f = TFile.Open("MassPlots/spring_dcsonlydata.root")
+    dir1 = f.GetDirectory("MT")
+    MT = ObjectProperty( dir1 , "TChannel" , ["QCD1" , "SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+    MT.RatioPlot("MT")
 
-exit()
+def TChannel_WEstiamtion():
+    f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1.root")
+    dir1 = f.GetDirectory("jPrimeEta" )
+    jPrimeEta = ObjectProperty( dir1 , "VJets" ,  ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+    jPrimeEta.QCD1.Scale( 5.0/jPrimeEta.QCD1.Integral() )
+    jPrimeEta.PrintSummary()
+    dir2 = f.GetDirectory("jPrimeEtaSB" )
+    jPrimeEtaSB = ObjectProperty( dir2 ,"VJets" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+    jPrimeEtaSB.QCD1.Scale( 1.0/jPrimeEtaSB.QCD1.Integral() )
+    jPrimeEtaSB.PrintSummary()
 
-# exit()
-# fqcd = TFile.Open( "/home/hbakhshi/Desktop/ThisMonth/SingleTop/PrePreApproval/qcd.root" )
-# hQCD = fqcd.Get("QCDEtaJ")
-# hQCD.Rebin( 2 )
-# hQCD.Scale( jPrimeEtaSB.QCD.Integral() / hQCD.Integral() )
-# jPrimeEtaSB.QCD = hQCD
+    jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
+    errDD = Double(0)
+    valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
+    print errDD
+    print valDD
+    jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
+    jPrimeDD_SB.SetLineColor( kRed )
+    jPrimeDD_SB.SetLineWidth( 3 )
+    jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
+    jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
+    jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
+    a = Draw( jPrimeDD_SB )
+    jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
+    jPrimeEta.Signal.SetLineColor( kBlue )
+    jPrimeEta.Signal.SetLineWidth( 3 )
+    jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
+    jPrimeEta.Signal.Draw("same")
 
-# fqcd = TFile.Open( "/home/hbakhshi/Documents/Physics/Analysis13TeV/MassPlots/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8_absetajetprime_SB_2j1t.root" )
-# hQCD = fqcd.Get("abs_eta_other_Je")
-# jPrimeEtaSB.QCD = hQCD
+def Others():
+    # fqcd = TFile.Open( "/home/hbakhshi/Desktop/ThisMonth/SingleTop/PrePreApproval/qcd.root" )
+    # hQCD = fqcd.Get("QCDEtaJ")
+    # hQCD.Rebin( 2 )
+    # hQCD.Scale( jPrimeEtaSB.QCD.Integral() / hQCD.Integral() )
+    # jPrimeEtaSB.QCD = hQCD
 
-jPrimeEtaSB.QCD1.Scale( (15.3+22.3)/(229.3) )
-# dataSB =  jPrimeEtaSB.Data.Integral()
-# MCSB = jPrimeEtaSB.MC.Integral()
+    # fqcd = TFile.Open( "/home/hbakhshi/Documents/Physics/Analysis13TeV/MassPlots/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8_absetajetprime_SB_2j1t.root" )
+    # hQCD = fqcd.Get("abs_eta_other_Je")
+    # jPrimeEtaSB.QCD = hQCD
 
-# jPrimeEtaSB.QCD1.Scale( dataSB/MCSB )
-# jPrimeEtaSB.Top.Scale( dataSB/MCSB )
-# jPrimeEtaSB.Signal.Scale( dataSB/MCSB )
+    jPrimeEtaSB.QCD1.Scale( (15.3+22.3)/(229.3) )
+    # dataSB =  jPrimeEtaSB.Data.Integral()
+    # MCSB = jPrimeEtaSB.MC.Integral()
 
-jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
-errDD = Double(0)
-valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
-print errDD
-print valDD
-jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
-jPrimeDD_SB.SetLineColor( kRed )
-jPrimeDD_SB.SetLineWidth( 3 )
-jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
-jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
-jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
-a = Draw( jPrimeDD_SB )
-jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
-jPrimeEta.Signal.SetLineColor( kBlue )
-jPrimeEta.Signal.SetLineWidth( 3 )
-jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
-jPrimeEta.Signal.Draw("same")
-
-# jPrimeEta = ObjectProperty( dir2 , "tChannel" , ["SUSY"] )
-# jPrimeDD_SB.Scale( jPrimeEta.VJets.Integral()/jPrimeDD_SB.Integral() )
-# jPrimeEta.MC.Add( jPrimeEta.VJets , -1 )
-# jPrimeEta.MC.Add( jPrimeDD_SB , +1 )
-# jPrimeEta.RatioPlot("")
+    # jPrimeEtaSB.QCD1.Scale( dataSB/MCSB )
+    # jPrimeEtaSB.Top.Scale( dataSB/MCSB )
+    # jPrimeEtaSB.Signal.Scale( dataSB/MCSB )
+    
+    jPrimeDD_SB = jPrimeEtaSB.GetDataSumBKGsSubtracted()
+    errDD = Double(0)
+    valDD = jPrimeDD_SB.IntegralAndError( -1 , 10000 , errDD )
+    print errDD
+    print valDD
+    jPrimeDD_SB.Scale( 1.0/jPrimeDD_SB.Integral() ) #jPrimeEta.Signal.Integral()
+    jPrimeDD_SB.SetLineColor( kRed )
+    jPrimeDD_SB.SetLineWidth( 3 )
+    jPrimeDD_SB.SetTitle( "Data Driven (SB)" )
+    jPrimeDD_SB.GetXaxis().SetTitle( "|#eta_{j'}|" )
+    jPrimeDD_SB.GetYaxis().SetTitle( "Normalized" )
+    a = Draw( jPrimeDD_SB )
+    jPrimeEta.Signal.Scale( 1.0 /jPrimeEta.Signal.Integral() )
+    jPrimeEta.Signal.SetLineColor( kBlue )
+    jPrimeEta.Signal.SetLineWidth( 3 )
+    jPrimeEta.Signal.SetTitle( "W+jets MC (SR)" )
+    jPrimeEta.Signal.Draw("same")
+    
+    # jPrimeEta = ObjectProperty( dir2 , "tChannel" , ["SUSY"] )
+    # jPrimeDD_SB.Scale( jPrimeEta.VJets.Integral()/jPrimeDD_SB.Integral() )
+    # jPrimeEta.MC.Add( jPrimeEta.VJets , -1 )
+    # jPrimeEta.MC.Add( jPrimeDD_SB , +1 )
+    # jPrimeEta.RatioPlot("")
 
