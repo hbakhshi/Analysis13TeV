@@ -48,10 +48,13 @@ class ObjectProperty:
         print "Sum" + " | " + self.GetFormattedIntegral( "MC" )
         print "Data | " + self.GetFormattedIntegral("Data") 
 
-    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f}" ):
+    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f},{1:.2f}" ):
         hist = getattr( self , name )
         val = hist.GetBinContent( biN )
         err = hist.GetBinError( biN )
+        if( not name == "Data" ):
+            val *= (41.9/41.0)
+            err *= (41.9/41.0)
         return formaT.format( val , err )
     def PrintCutFlowTable(self):
         firstLine = " | - | " + self.SignalName + " | " 
@@ -249,11 +252,16 @@ class Draw:
 
 # SingleTop part
 # cutflow table
-# f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1.root")
-# dir = f.GetDirectory("cutflowtable") 
-# cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-# cutflowtable.PrintCutFlowTable()
-#exit()
+f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1NewCFT.root")
+dir = f.GetDirectory("cutflowtable") 
+cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
+cutflowtable.Data.SetBinContent(1, 334639)
+cutflowtable.Data.SetBinContent(2, 11537)
+cutflowtable.Data.SetBinContent(3, 583)
+cutflowtable.Data.SetBinContent(4, 376)
+cutflowtable.Data.SetBinContent(5, 231)
+cutflowtable.PrintCutFlowTable()
+exit()
 
 # dirw1 = f.GetDirectory("cutflowtablew1") 
 # cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )

@@ -22,6 +22,8 @@ public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
+  Float_t GetPDFWeight(int i);
+  Float_t GetLHEWeight(int i);
    // Declaration of leaf types
    Float_t         met_Pt;
    Float_t         met_Phi;

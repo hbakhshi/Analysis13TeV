@@ -128,6 +128,16 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   TH1* hTopMass = new TH1D("hTopMass" , "Top Mass" , 500 , 0 , 500 );
   TH1* hTopMassEtaJ = new TH2D( "hTopMassEtaJ" , "Top Mass" , 500 , 0 , 500 , 20 , 0 , 5.0 );
 
+  TH1* hEtajPDFScales[102];
+  double ScalesPDF[102];
+  double CurrentPDFWeights[102];
+  for(int i=0 ; i < 102 ; i++){
+    TString s(to_string(i));
+    hEtajPDFScales[i] = new TH1D( TString("hEtaJp_PDF")+s , "" , 10 , 0 , 5.0 );
+    ScalesPDF[i] = 0 ;
+    CurrentPDFWeights[i] = 0;
+  }
+
   TH1* hEtajWScales[9];
   double WScalesTotal[9];
   double CurrentLHEWeights[9];
@@ -219,19 +229,38 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       }
 
       #ifdef SingleTopTreeLHEWeights_h
+      for( int i = 0 ; i < 102 ; i++ ){
+	CurrentPDFWeights[i] = fTree.GetPDFWeight(i)/fabs(fTree.Event_LHEWeight) ;
+	ScalesPDF[i] += CurrentPDFWeights[i] ;
+      }
+
       if( Sample.name == "WJets" ){
-	CurrentLHEWeights[0] = fTree.Event_LHEWeight /fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[1] = fTree.Event_LHEWeight1/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[2] = fTree.Event_LHEWeight2/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[3] = fTree.Event_LHEWeight3/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[4] = fTree.Event_LHEWeight4/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[5] = fTree.Event_LHEWeight5/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[6] = fTree.Event_LHEWeight6/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[7] = fTree.Event_LHEWeight7/fabs(fTree.Event_LHEWeight) ;
-	CurrentLHEWeights[8] = fTree.Event_LHEWeight8/fabs(fTree.Event_LHEWeight) ;
+
 	
-	for(int i = 0 ; i<9 ;i++)
+	if(fTree.GetLHEWeight(0) != fTree.Event_LHEWeight0) cout << "Wrong GetLHEWeight(0) Value" << endl;
+	if(fTree.GetLHEWeight(1) != fTree.Event_LHEWeight1) cout << "Wrong GetLHEWeight(1) Value" << endl;
+	if(fTree.GetLHEWeight(2) != fTree.Event_LHEWeight2) cout << "Wrong GetLHEWeight(2) Value" << endl;
+	if(fTree.GetLHEWeight(3) != fTree.Event_LHEWeight3) cout << "Wrong GetLHEWeight(3) Value" << endl;
+	if(fTree.GetLHEWeight(4) != fTree.Event_LHEWeight4) cout << "Wrong GetLHEWeight(4) Value" << endl;
+	if(fTree.GetLHEWeight(5) != fTree.Event_LHEWeight5) cout << "Wrong GetLHEWeight(5) Value" << endl;
+	if(fTree.GetLHEWeight(6) != fTree.Event_LHEWeight6) cout << "Wrong GetLHEWeight(6) Value" << endl;
+	if(fTree.GetLHEWeight(7) != fTree.Event_LHEWeight7) cout << "Wrong GetLHEWeight(7) Value" << endl;
+	if(fTree.GetLHEWeight(8) != fTree.Event_LHEWeight8) cout << "Wrong GetLHEWeight(8) Value" << endl;
+	
+	// CurrentLHEWeights[0] = fTree.Event_LHEWeight /fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[1] = fTree.Event_LHEWeight1/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[2] = fTree.Event_LHEWeight2/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[3] = fTree.Event_LHEWeight3/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[4] = fTree.Event_LHEWeight4/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[5] = fTree.Event_LHEWeight5/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[6] = fTree.Event_LHEWeight6/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[7] = fTree.Event_LHEWeight7/fabs(fTree.Event_LHEWeight) ;
+	// CurrentLHEWeights[8] = fTree.Event_LHEWeight8/fabs(fTree.Event_LHEWeight) ;
+	
+	for(int i = 0 ; i<9 ;i++){
+	  CurrentLHEWeights[i] = fTree.GetLHEWeight(i)/fabs(fTree.Event_LHEWeight) ;
 	  WScalesTotal[i] += CurrentLHEWeights[i];
+	}
       }
       #endif
       
@@ -509,6 +538,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
       if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
 #ifdef SingleTopTreeLHEWeights_h
+	for(int i = 0 ; i< 102 ; i++){
+	  hEtajPDFScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentPDFWeights[i] ) );
+	}
 	if( Sample.name == "WJets" ){
 	  for(int i=0;i<9;i++)
 	    hEtajWScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentLHEWeights[i] ) );
@@ -576,6 +608,14 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     hEtajWScales[i]->Scale( WScalesTotal[0]/WScalesTotal[i] );
     hEtajWScales[i]->Write();
   }
+
+  TDirectory* dirPDFScales = theFile->mkdir("PDFScales");
+  dirPDFScales->cd();
+  for(int i=0;i<102;i++){
+    cout << "PDFScales[i]" << ScalesPDF[i] << "," << WScalesTotal[0]/ScalesPDF[i] << endl;
+    hEtajPDFScales[i]->Scale( WScalesTotal[0]/ScalesPDF[i] );
+    hEtajPDFScales[i]->Write();
+  }
 #endif
 
   TDirectory* dir2 = theFile->mkdir("JbJOptimizationProps");
@@ -595,6 +635,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   //cutflowtable.Print("cutflowtable");
   theFile->Close();
 }
+
 //_____________________________________________________________________________________
 int main(int argc, char* argv[]) {
 #ifdef SingleTopTreeLHEWeights_h

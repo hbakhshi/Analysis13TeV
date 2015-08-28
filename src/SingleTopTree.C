@@ -41,3 +41,15 @@ void SingleTopTree::Loop()
       // if (Cut(ientry) < 0) continue;
    }
 }
+
+#ifdef SingleTopTreeLHEWeights_h
+Float_t SingleTopTree::GetPDFWeight(int i){
+  Float_t* first = &( this->Event_LHEWeight9 );
+  return *( first + i );
+}
+Float_t SingleTopTree::GetLHEWeight(int i){
+  Float_t* first = &( this->Event_LHEWeight0 );
+  return *( first + i );
+}
+
+#endif
