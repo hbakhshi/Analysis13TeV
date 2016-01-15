@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <sstream>
 #include <cmath>
+#include <fstream>
+#include <boost/lexical_cast.hpp>
 
 #include <stdexcept>
 
@@ -67,7 +69,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     alllabels.push_back( thecut->Name );
   }  
   //alllabels.push_back( "NoCut" );
-  //alllabels.push_back( "Trigger" );
+  alllabels.push_back( "Trigger" );
   //alllabels.push_back( "MuonSelection" );
   //alllabels.push_back( "MuonVeto1" );
   //alllabels.push_back( "MuonVeto" );
@@ -75,12 +77,27 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   alllabels.push_back( "== 2-Jets" );
   alllabels.push_back( "== 1-bJet" );
   alllabels.push_back( "MT >50 GeV" );
-  alllabels.push_back( "j'-bVeto" );
+  //alllabels.push_back( "j'-bVeto" );
   alllabels.push_back( "mtop" );
   //cout << alllabels.size() << endl;
 
   ExtendedObjectProperty cutflowtable("" , "cutflowtable" , "1" , alllabels.size() ,  0 , alllabels.size() , "2", {}, &alllabels );  
   ExtendedObjectProperty cutflowtablew1("" , "cutflowtablew1" , "1" , alllabels.size() ,  0 , alllabels.size() , "2", {}, &alllabels );  
+  
+
+  TString fileName = fOutputDir;
+  if(!fileName.EndsWith("/")) fileName += "/";
+  Util::MakeOutputDir(fileName);
+
+  bool printEventIds = true;
+  vector< ofstream* > EventIdFiles;
+  if(printEventIds){
+    for( int i = 0 ; i < alllabels.size() ; i++ ){
+      ofstream* filetxt = new ofstream(fileName + "/IPM_" + myfileName  + "_step" + boost::lexical_cast<string>(i) + ".txt" );
+      EventIdFiles.push_back( filetxt );
+    }
+  }
+
 
   ExtendedObjectProperty nJetsBeforeCut("LeptonVeto" , "nJets" , "1" , 8 , 0 , 8 , "2", {});
   ExtendedObjectProperty nJets20_47("OneBjet" , "nJets20_47" , "1" , 8 , 0 , 8 , "2", {});
@@ -89,14 +106,21 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 
   ExtendedObjectProperty MTBeforeCut("OneBjetNoMT" , "MT" , "1" , 30 , 0 , 300 , "2", {});
 
+  ExtendedObjectProperty nPVBeforeCutsUnCorr("nPVBeforeCutsUnCorr" , "nPVBeforeCutsUnCorr" , "1" , 100 , 0 , 100 , "2", {});
+  ExtendedObjectProperty nPVBeforeCuts("nPVBeforeCuts" , "nPVBeforeCuts" , "1" , 100 , 0 , 100 , "2", {});
+  ExtendedObjectProperty nPVAfterCutsUnCorr("nPVAfterCutsUnCorr" , "nPVAfterCutsUnCorr" , "1" , 100 , 0 , 100 , "2", {});
+  ExtendedObjectProperty nPVAfterCuts("nPVAfterCuts" , "nPVAfterCuts" , "1" , 100 , 0 , 100 , "2", {});
+
   ExtendedObjectProperty TopMass("OneBjet" , "TopMass" , "1" , 30 , 100 , 400 , "2", {});
   ExtendedObjectProperty jprimeEta("OneBjet" , "jPrimeEta" , "1" , 10 , 0 , 5.0 , "2", {});
   ExtendedObjectProperty jprimeEtaSB("SideBand" , "jPrimeEtaSB" , "1" , 10 , 0 , 5.0 , "2", {});
   ExtendedObjectProperty jprimePt("OneBjet" , "jPrimePt" , "1" , 30 , 30 , 330 , "2", {});
-  ExtendedObjectProperty muPtOneB("OneBjet" , "muPt" , "1" , 40 , 30 , 430 , "2", {});
+  ExtendedObjectProperty muPtOneB("OneBjet" , "muPt" , "1" , 20 , 20 , 120 , "2", {});
   ExtendedObjectProperty muCharge("OneBjet" , "muCharge" , "1" , 40 , -2 , 2 , "2", {});
-  ExtendedObjectProperty muEtaOneB("OneBjet" , "muEta" , "1" , 10 , 0 , 2.5 , "2", {});
-  ExtendedObjectProperty METOneB("OneBjet" , "MET" , "1" , 40 , 0 , 400 , "2", {});
+  ExtendedObjectProperty muEtaOneB("OneBjet" , "muEta" , "1" , 10 , -2.5 , 2.5 , "2", {});
+  ExtendedObjectProperty METOneBSR("OneBjet" , "MET_SR" , "1" , 20 , 0 , 200 , "2", {});
+  ExtendedObjectProperty METOneBSB("OneBjet" , "MET_SB" , "1" , 20 , 0 , 200 , "2", {});
+  ExtendedObjectProperty METOneBAll("OneBjet" , "MET_ALL" , "1" , 20 , 0 , 200 , "2", {});
   ExtendedObjectProperty bPtOneB("OneBjet" , "bPt" , "1" , 30 , 30 , 330 , "2", {});
   ExtendedObjectProperty bEtaOneB("OneBjet" , "bEta" , "1" , 10 , 0 , 5.0 , "2", {});
   ExtendedObjectProperty nonbCSV("OneBjet" , "jpCSV" , "1" , 20 , 0 , 1.0 , "2", {});
@@ -148,7 +172,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
     CurrentLHEWeights[i] = 0;
   }
 
-  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muCharge, &muEtaOneB , &METOneB , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47};
+  std::vector<ExtendedObjectProperty*> allProps = {&cutflowtable, &cutflowtablew1 , &nJetsBeforeCut , &nbJets , &MTBeforeCut, &TopMass , &jprimeEta , &jprimeEtaSB , &jprimePt , &muPtOneB, &muCharge, &muEtaOneB , &METOneBSR ,&METOneBSB , &METOneBAll , & bPtOneB , &bEtaOneB , &nonbCSV ,&nJets20_24, &nJets20_47,&nPVAfterCuts, &nPVBeforeCuts , &nPVAfterCutsUnCorr , &nPVBeforeCutsUnCorr};
 
   std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
   nextcut.Reset();
@@ -167,6 +191,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
    
 
     double Weight = Sample.xsection * Sample.kfact * Sample.lumi / (Sample.nevents*Sample.PU_avg_weight);
+    //Weight = 1.0;
     if(data == 1)
       Weight = 1.0;
 
@@ -221,7 +246,11 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       nextcut.Reset();
       double weight = Weight;
 
-      if( Sample.name == "Signal" || Sample.name == "WJets" || Sample.name == "DYJets"   ){
+      if( !data ){
+	weight *= fTree.Event_puWeight ;
+      }
+
+      if( Sample.UseLHEWeight ){
 	//cout << "SIGNAL" << endl;
 	weight *= fTree.Event_LHEWeightSign ;
 	// if(fTree.Event_LHEWeightSign < 0.0)
@@ -234,7 +263,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	ScalesPDF[i] += CurrentPDFWeights[i] ;
       }
 
-      if( Sample.name == "WJets" ){
+      if( Sample.name == "WJets" || Sample.name == "Signal" ){
 
 	
 	if(fTree.GetLHEWeight(0) != fTree.Event_LHEWeight0) cout << "Wrong GetLHEWeight(0) Value" << endl;
@@ -292,15 +321,32 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 //       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
 //       cutindex ++ ;
 
-      if( data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v2 > 0.5) )
-      	continue;
+      // if( data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v2 > 0.5) )
+      // 	continue;
       
-      if( !data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v1 > 0.5) )
+      // if( !data && !(fTree.Event_passesHLT_IsoMu20_eta2p1_v1 > 0.5) )
+      // 	continue;
+
+      nPVBeforeCutsUnCorr.Fill( fTree.Event_nPV , weight/fTree.Event_puWeight , false , true );
+      nPVBeforeCuts.Fill( fTree.Event_nPV , weight , false, true);
+
+      // if( printEventIds )
+      // 	(*(EventIdFiles[cutindex])) << fTree.Event_EventNumber << endl; 
+      // cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      // cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      // cutindex ++ ;
+      
+      if( data && !(fTree.Event_passesHLT_IsoMu20_v2 > 0.5 || fTree.Event_passesHLT_IsoMu20_v1 > 0.5 || fTree.Event_passesHLT_IsoMu20_v3 > 0.5)  )
+	continue;
+      if(!data && !(fTree.Event_passesHLT_IsoMu20_v1 > 0.5) )
 	continue;
 
-//       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-//       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-//       cutindex ++ ;
+      if( printEventIds )
+	(*(EventIdFiles[cutindex])) << fTree.Event_EventNumber << endl;
+      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      cutindex ++ ;
+      
 
       //cout << "nMuons : " << fTree.muons_size << endl;
       int tightMuIndex =-1;
@@ -317,6 +363,8 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       	if( fTree.muons_Pt[imu] > 22.0 &&
 	    fabs(fTree.muons_Eta[imu]) < 2.1 &&
 	    fTree.muons_IsTightMuon[imu] > 0.5 ){
+
+
 	  if( fTree.muons_Iso04[imu] < 0.06 ){
 	    isTight = true;
 	    nTightMuons ++;
@@ -343,11 +391,13 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	if( Sample.sname != "QCD" )
 	  continue;
 
-//       if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
-// 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-// 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-//       }
-//       cutindex ++ ;
+      // if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
+      // 	if( printEventIds )
+      // 	  (*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
+      // 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      // 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      // }
+      // cutindex ++ ;
 
       bool isiso = true;
       if(Sample.sname == "QCD"){
@@ -364,22 +414,35 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if( nLooseMuos > 0 )
       	continue;
 
-//       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-//       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-//       cutindex ++ ;
+#ifdef MUONCHARGEP
+      if(fTree.muons_Charge[tightMuIndex] < 0)
+	continue;
+#endif
+#ifdef MUONCHARGEN
+      if(fTree.muons_Charge[tightMuIndex] > 0)
+	continue;
+#endif
+
+      // if( printEventIds )
+      // 	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
+      // cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      // cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      // cutindex ++ ;
 
       int nLooseElectrons = 0;
       for( int iele = 0 ; iele < fTree.electrons_size;iele ++ ){
       	if( fTree.electrons_Pt[iele] > 20 &&
 	    fabs(fTree.electrons_Eta[iele]) < 2.5 && 
 	    ( fabs(fTree.electrons_Eta[iele]) < 1.4442 || fabs(fTree.electrons_Eta[iele]) > 1.566) &&
-	    fTree.electrons_isVeto[iele] > 0.5 )
+	    fTree.electrons_vidVeto[iele] > 0.5 )
 	  nLooseElectrons++;
       }
       
       if( nLooseElectrons > 0 )
       	continue;
 
+      if( printEventIds )
+	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
@@ -404,19 +467,35 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if( muon.Energy() == 0.0 )
 	cout << "ZERO???" <<endl;
       for( int jid = 0 ; jid < fTree.jetsAK4_size ; jid++ ){
-	//if( fTree.jetsAK4_Pt[jid]>20)
-	//cout << "  " << jid << " - " << DR << "-" << fTree.jetsAK4_Pt[jid] << " - " << fabs(fTree.jetsAK4_Eta[jid]) << "-"  << fTree.jetsAK4_PassesID[jid] << "-" << fTree.jetsAK4_numberOfDaughters[jid] << "-" <<  fTree.jetsAK4_MuonEnergy[jid] << "-" <<  fTree.jetsAK4_chargedMultiplicity[jid] << "-" <<  fTree.jetsAK4_chargedHadronEnergy[jid] << "-" <<  fTree.jetsAK4_chargedEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralEmEnergy[jid] << "-" <<  fTree.jetsAK4_neutralHadronEnergy[jid] << "-" <<  fTree.jetsAK4_E[jid] << "-" <<  fTree.jetsAK4_jecFactor0[jid]  << endl ;
 
-      	if( fTree.jetsAK4_Pt[jid] > 20 &&
+	float NHF = fTree.jetsAK4_JetID_neutralHadronEnergyFraction[jid] ;
+	float NEMF = fTree.jetsAK4_JetID_neutralEmEnergyFraction[jid] ;
+	float NumConst = fTree.jetsAK4_JetID_numberOfDaughters[jid] ;
+	float eta = fTree.jetsAK4_Eta[jid] ;
+	float CHF = fTree.jetsAK4_JetID_chargedHadronEnergyFraction[jid] ;
+	float CHM = fTree.jetsAK4_JetID_chargedMultiplicity[jid] ;
+	float CEMF = fTree.jetsAK4_JetID_chargedEmEnergyFraction[jid] ;
+	float NumNeutralParticle = fTree.jetsAK4_JetID_neutralMultiplicity[jid] ;
+
+
+	bool looseid ;
+	if(  abs(eta)<=3.0 ) {
+	  looseid = (NHF<0.99 && NEMF<0.99 && NumConst>1) && ((abs(eta)<=2.4 && CHF>0 && CHM>0 && CEMF<0.99) || abs(eta)>2.4) ;
+	}
+	else
+	  looseid = (NEMF<0.90 && NumNeutralParticle>10) ;
+
+      	if( fTree.jetsAK4_CorrPt[jid] > 20 &&
 	    fabs( fTree.jetsAK4_Eta[jid] ) < 4.7 &&
-	    fTree.jetsAK4_PassesID[jid] > 0.5  // IsLoose for Fall14, PassesID for SPRING samples ; 	    //fTree.jetsAK4_PassesDRtight[jid] > 0.5 
+	    looseid
 	    ){
 	  TLorentzVector jet;
-	  jet.SetPtEtaPhiE( fTree.jetsAK4_Pt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_E[jid] );
+	  jet.SetPtEtaPhiE( fTree.jetsAK4_CorrPt[jid] , fTree.jetsAK4_Eta[jid] , fTree.jetsAK4_Phi[jid] , fTree.jetsAK4_CorrE[jid] );
 	  double DR = muon.DeltaR( jet );
-	  if ( DR >= 0.3 ){
 
-	    if( fTree.jetsAK4_Pt[jid] < 40 ){
+	  if ( DR > 0.3 ){
+
+	    if( fTree.jetsAK4_CorrPt[jid] <= 40 ){
 	      nJetsPt20_47 ++ ;
 	      if( fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
 		nJetsPt20_24 ++;
@@ -436,7 +515,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	    else if( nJets == 3 )
 	      j3index = jid ;
 	    
-	    if( fTree.jetsAK4_CSV[jid] > 0.97  && fabs( fTree.jetsAK4_Eta[jid] ) < 2.4 ){
+	    if( fTree.jetsAK4_IsCSVT[jid] == true  && fabs( fTree.jetsAK4_Eta[jid] ) <= 2.4 ){
 	      howManyBJets ++;
 	      if(howManyBJets==1)
 		bjIndex = jid ;
@@ -453,6 +532,8 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	continue;
 
 
+      if( printEventIds )
+	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
@@ -461,6 +542,17 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if( howManyBJets != NUMBEROFBJETS )
 	continue;
 
+      if( !data ){
+	if( NUMBEROFBJETS == 2 )
+	  weight *= fTree.Event_bWeight2CSVT ;
+	else if (NUMBEROFBJETS == 1 )
+	  weight *= fTree.Event_bWeight1CSVT ;
+      }
+
+      //weight = 1.0;
+
+      if( printEventIds )
+	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
@@ -470,9 +562,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       MTBeforeCut.Fill( MT , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       // if( fTree.met_Pt < 45 )
       // 	continue;
-      if( MT < 50 && NUMBEROFBJETS == 1 )
+      if( MT < 50 && (NUMBEROFBJETS == 1 && NUMBEROFJETS == 2) )
       	continue;
-      
+
+      if( printEventIds )
+	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
+     
       cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
       cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
       cutindex ++ ;
@@ -482,9 +577,11 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 //       if( fTree.jetsAK4_CSV[jprimeIndex] > 0.605 )
 // 	continue;
 
-      cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      cutindex ++ ;
+      // if( printEventIds )
+      // 	(*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
+      // cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
+      // cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
+      // cutindex ++ ;
 
       nJets20_47.Fill( nJetsPt20_47 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
       nJets20_24.Fill( nJetsPt20_24 , weight , EventsIsPSeudoData < fabs(weight) , isiso);
@@ -532,36 +629,45 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       TLorentzVector muLV;
       muLV.SetPtEtaPhiE( fTree.muons_Pt[tightMuIndex] , fTree.muons_Eta[tightMuIndex] , fTree.muons_Phi[ tightMuIndex ] , fTree.muons_E[tightMuIndex] );
       TLorentzVector bjetLV;
-      bjetLV.SetPtEtaPhiE( fTree.jetsAK4_Pt[ bjIndex ] , fTree.jetsAK4_Eta[ bjIndex ] , fTree.jetsAK4_Phi[ bjIndex ] , fTree.jetsAK4_E[ bjIndex ] ) ; 
+      bjetLV.SetPtEtaPhiE( fTree.jetsAK4_CorrPt[ bjIndex ] , fTree.jetsAK4_Eta[ bjIndex ] , fTree.jetsAK4_Phi[ bjIndex ] , fTree.jetsAK4_CorrE[ bjIndex ] ) ; 
       double topMass = topUtils.top4Momentum( muLV , bjetLV , fTree.met_Px , fTree.met_Py ).mass();
       TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
       if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
+
+	nPVAfterCutsUnCorr.Fill( fTree.Event_nPV , weight/fTree.Event_puWeight , EventsIsPSeudoData < fabs(weight) , isiso );
+	nPVAfterCuts.Fill( fTree.Event_nPV , weight , EventsIsPSeudoData < fabs(weight) , isiso );
+
 #ifdef SingleTopTreeLHEWeights_h
 	for(int i = 0 ; i< 102 ; i++){
 	  hEtajPDFScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentPDFWeights[i] ) );
 	}
-	if( Sample.name == "WJets" ){
+	if( Sample.name == "WJets" || Sample.name == "Signal"){
 	  for(int i=0;i<9;i++)
 	    hEtajWScales[i]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight*fabs( CurrentLHEWeights[i] ) );
 	}
 #endif
 	
 	jprimeEta.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso);
-	jprimePt.Fill( fTree.jetsAK4_Pt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	jprimePt.Fill( fTree.jetsAK4_CorrPt[jprimeIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muPtOneB.Fill( fTree.muons_Pt[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muCharge.Fill( fTree.muons_Charge[tightMuIndex] , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 	muEtaOneB.Fill( fabs(fTree.muons_Eta[tightMuIndex]) , weight , EventsIsPSeudoData < fabs(weight), isiso );
-	METOneB.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
-	bPtOneB.Fill( fTree.jetsAK4_Pt[bjIndex] , weight , EventsIsPSeudoData < fabs(weight), isiso );
+	METOneBSR.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
+	bPtOneB.Fill( fTree.jetsAK4_CorrPt[bjIndex] , weight , EventsIsPSeudoData < fabs(weight), isiso );
 	bEtaOneB.Fill(fabs( fTree.jetsAK4_Eta[bjIndex] ) , weight , EventsIsPSeudoData < fabs(weight), isiso );
 
+	if( printEventIds )
+	  (*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
 	cutindex++;
       }else{
 	jprimeEtaSB.Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ) , weight , EventsIsPSeudoData < fabs(weight) , isiso );
+	METOneBSB.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
       }
+
+      METOneBAll.Fill(  fTree.met_Pt , weight , EventsIsPSeudoData < fabs(weight) , isiso);
 
       if(Sample.name == "Signal" )
 	hTopMass->Fill( topMass , weight );
@@ -572,9 +678,9 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   }
 
 
-  TString fileName = fOutputDir;
-  if(!fileName.EndsWith("/")) fileName += "/";
-  Util::MakeOutputDir(fileName);
+  // TString fileName = fOutputDir;
+  // if(!fileName.EndsWith("/")) fileName += "/";
+  // Util::MakeOutputDir(fileName);
   fileName += myfileName + ".root" ;
 
   TFile *theFile = new TFile(fileName.Data(), "RECREATE");
@@ -631,9 +737,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   theFile->cd();
   hTopMass->Write();
   hTopMassEtaJ->Write();
-
   //cutflowtable.Print("cutflowtable");
   theFile->Close();
+  if( printEventIds )
+    for( auto a : EventIdFiles ){
+      a->close();
+    }
 }
 
 //_____________________________________________________________________________________

@@ -1,0 +1,19 @@
+############################################################################################
+GENERAL
+Path             ///cmsdata2/STEA/wjets_pdfWeights/
+#__________________________________________________________________________________________
+# list of samples
+#
+
+SAMPLE
+Name		WJets
+SName		VJets
+ShapeName	WJets
+File            *.root
+TreeName	DMTreesDumper/ttDM__noSyst
+Xsection  	61526.7
+Kfact           1
+Lumi            41.0
+Type            mc
+Color		417
+NEvents		16476437

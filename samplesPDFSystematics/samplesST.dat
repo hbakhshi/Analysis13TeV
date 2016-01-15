@@ -1,0 +1,20 @@
+############################################################################################
+GENERAL
+Path             ///cmsdata2/STEA/signal_pdfWeights/
+#__________________________________________________________________________________________
+# list of samples
+#
+
+SAMPLE
+Name            Signal
+SName           TChannel
+ShapeName       Signal
+File            *.root
+TreeName	DMTreesDumper/ttDM__noSyst
+Xsection        70.3
+Kfact           1.
+Lumi            41.0
+Type            mc
+Color           1
+NEvents         860070
+

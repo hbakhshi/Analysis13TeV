@@ -249,8 +249,8 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
   TH1::SetDefaultSumw2();
    
 
-  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel","VV" , "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, kOrange+3 , 500, 1, kBlack};
   //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
   //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
@@ -341,8 +341,8 @@ ExtendedObjectProperty::ExtendedObjectProperty( TString cutname , TString name, 
 
   TH1::SetDefaultSumw2();
    
-  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel", "MC", "SUSY" , "data" };
-  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, 500, 1, kBlack};
+  vector<TString>  cnames = {"QCD1", "VJets", "Top", "TChannel", "VV" , "MC", "SUSY" , "data" };
+  vector<int>      ccolor = {kGray, kGreen-2,kOrange-3, kRed, kOrange+3 , 500, 1, kBlack};
   //vector<TString>  cnames = {"tChannel",  "ttbar",      "tW" ,      "sChannel" ,    "WJets",   "DY",   "QCD",  "MC", "SUSY" , "data" };
   //vector<int>      ccolor = {   kRed   ,  kOrange+1, kOrange ,  kYellow  ,  kGreen+2 ,  kBlue+3,  kGray ,   500,      1 , kBlack };
 
@@ -901,6 +901,18 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
+   entry=leg->AddEntry("NULL","VV","f");
+
+   entry->SetFillColor(kOrange+3);
+   entry->SetFillStyle(1001);
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+
+
 
    leg->Draw();
   //} 
@@ -1302,6 +1314,7 @@ void sample::Print(double Weight){
   std::cout << setfill('=') << std::setw(70) << "" << std::endl;
   cout << "looping over :     " <<endl;	
   cout << "   Name:           " << name << endl;
+  cout << "   ShortName:      " << sname << endl;
   cout << "   File:           " << file->GetName() << endl;
   cout << "   Events:         " << nevents  << endl;
   cout << "   Events in tree: " << tree->GetEntries() << endl; 
@@ -1309,8 +1322,9 @@ void sample::Print(double Weight){
   cout << "   kfactor:        " << kfact << endl;
   cout << "   avg PU weight:  " << PU_avg_weight << endl;
   cout << "   Weight:         " << Weight <<endl;
+  cout << "   Type:           " << type << endl;
+  cout << "   UseLHEW:        " << UseLHEWeight << endl;
   std::cout << setfill('-') << std::setw(70) << "" << std::endl;
-
 }
 
 

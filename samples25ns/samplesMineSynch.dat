@@ -1,0 +1,37 @@
+############################################################################################
+GENERAL
+Path             ///cmsdata2/paktinat/tchannel/Trees/
+#__________________________________________________________________________________________
+# list of samples
+#
+## -------- Signal --------
+
+SAMPLE
+Name            Data
+SName           Data
+ShapeName       Data
+File            Synchronization_Run2015D_SingleMuon_MINIAOD_05Oct2015_v1_NewJES.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection        44.07048
+Kfact           1.
+Lumi            1000
+Type            data
+Color           1
+NEvents         49300
+
+
+#SAMPLE
+Name            Signal1
+SName           Top
+ShapeName       Top
+File            Synchronization_ST_t_channel_4f_leptonDecays_13TeV_amcatnlo_pythia8_TuneCUETP8M1_NewJES.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection        44.07048
+Kfact           1.
+Lumi            1000
+Type            mc
+Color           1
+NEvents         49300
+

@@ -1,0 +1,20 @@
+############################################################################################
+GENERAL
+Path             ///cmsdata2/STEA/ttbar_pdfWeights/
+#__________________________________________________________________________________________
+# list of samples
+#
+
+SAMPLE
+Name		TTJets
+SName		Top
+ShapeName	Top
+File            *.root
+TreeName	DMTreesDumper/ttDM__noSyst
+Xsection  	831.76
+Kfact           1.	
+Lumi            41.0
+Type            mc
+Color		600
+NEvents		19665194
+

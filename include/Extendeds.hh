@@ -253,6 +253,7 @@ struct sample{
   TString type;
   TFile *file;
   TString treename;
+  bool  UseLHEWeight;
   TTree *tree;
   float xsection;
   float nevents;

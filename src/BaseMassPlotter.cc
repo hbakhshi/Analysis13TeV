@@ -82,6 +82,9 @@ void BaseMassPlotter::loadSamples(const char* filename){
 	cout << "NEntries : " << s.tree->GetEntries() << endl;
       s.file = ((TChain*)(s.tree))->GetFile() ;
 
+      IN.getline(buffer, 200, '\n');
+      sscanf(buffer, "LHEWeight\t%f", &ParValue);
+      s.UseLHEWeight = (ParValue > 0.5 ) ;
 			
       IN.getline(buffer, 200, '\n');
       sscanf(buffer, "Xsection\t%f", &ParValue);
@@ -170,6 +173,7 @@ void BaseMassPlotter::loadSamples(const char* filename){
 	cout << "   avg PU weight:  " << s.PU_avg_weight << endl;
 	cout << "   type:           " << s.type << endl;
 	cout << "   Color:          " << s.color << endl;
+	cout << "   UseLHEW:        " << s.UseLHEWeight << endl;
       }
 
       fSamples.push_back(s);
