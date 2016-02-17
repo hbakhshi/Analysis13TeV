@@ -1,15 +1,15 @@
 ############################################################################################
 GENERAL
-Path             ///cmsdata2/
+Path             ///home/fynu/hbakhshiansohi/data/TChannel25nsFiles/
 #__________________________________________________________________________________________
 # list of samples
 #
 
 SAMPLE
-Name		RunII_25ns_SingleMu
+Name		RunII_25ns_SingleMu_05Oct
 SName		Data
 ShapeName	Data
-File            paktinat/tchannel/Trees/SingleMuon*New_Part*.root
+File            data/05Oct/*.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection  	1.
@@ -17,7 +17,22 @@ Kfact           1.
 Lumi            1.
 Type            data
 Color	        1
-NEvents		72452379
+NEvents		-1
+
+SAMPLE
+Name		RunII_25ns_SingleMu_promptv4
+SName		Data
+ShapeName	Data
+File            data/promptv4/*.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection  	1.
+Kfact           1.	
+Lumi            1.
+Type            data
+Color	        1
+NEvents		-1
+
 
 ## -------- Signal --------
 
@@ -39,7 +54,7 @@ SAMPLE
 Name            Signal
 SName           TChannel
 ShapeName       Signal
-File            hbakhshi/tchannel25ns/Trees/ST_t-channel_top.root
+File            ST_t-channel_top.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection        44.07048
@@ -53,7 +68,7 @@ SAMPLE
 Name            Signal
 SName           TChannel
 ShapeName       Signal
-File            hbakhshi/tchannel25ns/Trees/ST_t-channel_antitop.root
+File            ST_t-channel_antitop.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection        26.2278
@@ -68,10 +83,10 @@ SAMPLE
 Name		QCDMuEnriched
 SName		QCD1
 ShapeName	QCD
-File          	paktinat/tchannel/Trees/QCD_Pt_20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8_Part*.root  
+File          	QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8/*.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
-Xsection  	381304
+Xsection  	114391.2      381304*0.3 for DD corrections
 Kfact           1.
 Lumi            2093.37
 Type            mc
@@ -84,7 +99,7 @@ SAMPLE
 Name		WJets
 SName		VJets
 ShapeName	WJets
-File            paktinat/tchannel/Trees/WjetsToLNu_TuneCUETP8M1_13TeV_amcatnloFXFX_pythia8*.root
+File            WjetsToLNu_TuneCUETP8M1_13TeV_amcatnloFXFX_pythia8*.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	1
 Xsection  	61526.7
@@ -98,7 +113,7 @@ SAMPLE
 Name		DYJets
 SName		VJets
 ShapeName	DY
-File            paktinat/tchannel/Trees/DYJetsToLL_M_50_TuneCUETP8M1_13TeV_amcatnloFXFX_pythia8_Part*.root
+File            DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/*.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	1
 Xsection  	6025.2
@@ -112,7 +127,7 @@ SAMPLE
 Name		SingleTop_s
 SName		Top
 ShapeName	Top
-File            hbakhshi/tchannel25ns/Trees/ST_s-channel.root
+File            ST_s-channel.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	1
 Xsection  	3.7
@@ -127,7 +142,7 @@ SAMPLE
 Name		SingleTop_tW
 SName		Top
 ShapeName	Top
-File            paktinat/tchannel/Trees/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M1_11_17.root
+File            ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M1_11_17.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection  	35.6
@@ -142,7 +157,7 @@ SAMPLE
 Name		SingleTopbar_tW
 SName		Top
 ShapeName	Top
-File            hbakhshi/tchannel25ns/Trees/ST_tW_antitop.root
+File            ST_tW_antitop.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection  	35.6
@@ -156,7 +171,7 @@ SAMPLE
 Name		TTJets
 SName		Top
 ShapeName	Top
-File            paktinat/tchannel/Trees/TT_TuneCUETP8M1_13TeV-powheg-pythia8_Part*.root
+File            TT_TuneCUETP8M1_13TeV-powheg-pythia8/*.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection  	831.76
@@ -170,7 +185,7 @@ SAMPLE
 Name		WW
 SName		VV
 ShapeName	VV
-File            paktinat/tchannel/Trees/WWToLNuQQ_13TeV_powheg_11_17.root
+File            WWToLNuQQ_13TeV_powheg_11_17.root
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	0
 Xsection  	118.7
@@ -184,7 +199,7 @@ SAMPLE
 Name		WZ
 SName		VV
 ShapeName	VV
-File            paktinat/tchannel/Trees/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8*
+File            WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8*
 TreeName	DMTreesDumper/ttDM__noSyst
 LHEWeight	1
 Xsection  	44.9

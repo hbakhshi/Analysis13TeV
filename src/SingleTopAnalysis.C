@@ -89,7 +89,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   if(!fileName.EndsWith("/")) fileName += "/";
   Util::MakeOutputDir(fileName);
 
-  bool printEventIds = true;
+  bool printEventIds = false;
   vector< ofstream* > EventIdFiles;
   if(printEventIds){
     for( int i = 0 ; i < alllabels.size() ; i++ ){
@@ -177,6 +177,17 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
   std::vector<ExtendedObjectProperty*> JbJOptimizationProps = {&nLbjets1EJ24,&nTbjets1EJ24,&nLbjets2EJ24,&nTbjets2EJ24,&nLbjets3EJ24,&nTbjets3EJ24,&nLbjets4EJ24,&nTbjets4EJ24,&nLbjets1EJ47,&nTbjets1EJ47,&nLbjets2EJ47,&nTbjets2EJ47,&nLbjets3EJ47,&nTbjets3EJ47,&nLbjets4EJ47,&nTbjets4EJ47};
   nextcut.Reset();
 
+
+  //codes for 2j0t selection
+  TFile *theTreeFile = NULL;
+  if(IsQCD==1)
+    theTreeFile = new TFile( (fileName+ myfileName + "_Trees.root" ).Data(), "RECREATE");    
+
+  double MT_QCD_Tree , TOPMASS_QCD_Tree , MuIso_QCD_Tree , Weight_QCD_Tree;
+
+  TTree* theQCD_Tree = NULL;
+  //end of 2j0t
+
   for(int ii = 0; ii < fSamples.size(); ii++){
 
     int data = 0;
@@ -188,7 +199,23 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       data = 1;
     }else
       lumi = Sample.lumi; 
-   
+
+    if( theTreeFile ){
+      TString treename = Sample.sname ;
+      if( data )
+	treename = "Data";
+      if( theTreeFile->Get( treename ) ){
+	theQCD_Tree = (TTree*) (theTreeFile->Get( treename )) ; 
+      }else{
+	theTreeFile->cd();
+	theQCD_Tree = new TTree( treename , treename + " tree for QCD shape/normalization studies" );
+	theQCD_Tree->Branch( "MT/D" , &MT_QCD_Tree );
+	theQCD_Tree->Branch( "TOPMASS/D" , &TOPMASS_QCD_Tree );
+	theQCD_Tree->Branch( "MuIso/D" , &MuIso_QCD_Tree );
+	theQCD_Tree->Branch( "Weight/D" , &Weight_QCD_Tree );
+      }
+    }
+
 
     double Weight = Sample.xsection * Sample.kfact * Sample.lumi / (Sample.nevents*Sample.PU_avg_weight);
     //Weight = 1.0;
@@ -365,12 +392,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	    fTree.muons_IsTightMuon[imu] > 0.5 ){
 
 
-	  if( fTree.muons_Iso04[imu] < 0.06 ){
+	  if( fTree.muons_Iso04[imu] < 0.06 ){ 
 	    isTight = true;
 	    nTightMuons ++;
 	    if( tightMuIndex == -1 )
 	      tightMuIndex = imu;
-	  }else{
+	  }else if( fTree.muons_Iso04[imu] < 0.15 ){
 	    nTightNonIsoMuons ++;
 	    if( nonTightMuIndex == -1 )
 	      nonTightMuIndex = imu;
@@ -386,31 +413,18 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
 	  }
       }      
 
-   
+      if(IsQCD){
+	nLooseMuos = nTightMuons ;	
+	nTightMuons = nTightNonIsoMuons ;
+	tightMuIndex = nonTightMuIndex ;
+      }
+
+
       if( nTightMuons != 1 )
-	if( Sample.sname != "QCD" )
 	  continue;
 
-      // if( Sample.sname != "QCD" || ( Sample.sname == "QCD" && nTightMuons == 1 ) ){
-      // 	if( printEventIds )
-      // 	  (*(EventIdFiles[cutindex])) << (fTree.Event_EventNumber) << endl ;
-      // 	cutflowtable.Fill( cutindex , weight , EventsIsPSeudoData < fabs(weight) );
-      // 	cutflowtablew1.Fill( cutindex , weight/fabs(weight) , EventsIsPSeudoData < fabs(weight) );
-      // }
-      // cutindex ++ ;
-
       bool isiso = true;
-      if(Sample.sname == "QCD"){
-      	if( nTightMuons == 0 && nTightNonIsoMuons == 1){
-      	  isiso = false;
-      	  tightMuIndex = nonTightMuIndex ;
-      	}
-      	else if ( nTightMuons == 1 )
-      	  isiso = true;
-      	else
-      	  continue;
-      }
-      
+
       if( nLooseMuos > 0 )
       	continue;
 
@@ -562,7 +576,7 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       MTBeforeCut.Fill( MT , weight , EventsIsPSeudoData < fabs(weight) , isiso );
       // if( fTree.met_Pt < 45 )
       // 	continue;
-      if( MT < 50 && (NUMBEROFBJETS == 1 && NUMBEROFJETS == 2) )
+      if( MT < 50 && (NUMBEROFBJETS == 1 && NUMBEROFJETS == 2) && !IsQCD )
       	continue;
 
       if( printEventIds )
@@ -633,6 +647,16 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       double topMass = topUtils.top4Momentum( muLV , bjetLV , fTree.met_Px , fTree.met_Py ).mass();
       TopMass.Fill( topMass , weight , EventsIsPSeudoData < fabs(weight) , isiso ); //fTree.resolvedTopSemiLep_Mass[0]
 
+      MT_QCD_Tree = MT;
+      TOPMASS_QCD_Tree = topMass ;
+      MuIso_QCD_Tree = fTree.muons_Iso04[tightMuIndex];
+      Weight_QCD_Tree = weight ;
+
+      if( IsQCD )
+	theQCD_Tree->Fill();
+
+
+
       if( (130. < topMass && topMass < 225.) || NUMBEROFBJETS == 2 ){
 
 	nPVAfterCutsUnCorr.Fill( fTree.Event_nPV , weight/fTree.Event_puWeight , EventsIsPSeudoData < fabs(weight) , isiso );
@@ -674,9 +698,12 @@ void MassPlotterSingleTop::singleTopAnalysis(TList* allCuts, Long64_t nevents ,T
       if(Sample.name == "WJets")
 	hTopMassEtaJ->Fill( topMass ,fabs( fTree.jetsAK4_Eta[jprimeIndex] )  );
     }
+    theQCD_Tree->Write();
     
   }
 
+  theTreeFile->Close();
+      
 
   // TString fileName = fOutputDir;
   // if(!fileName.EndsWith("/")) fileName += "/";
