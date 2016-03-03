@@ -514,72 +514,28 @@ void ExtendedObjectProperty::Fill(double w){
     isString ? theMCH->Fill(sVal , w) : theMCH->Fill(dVal , w);
 }
 
- void ExtendedObjectProperty::Fill(double dVal , double w , std::map<TString,double> WSyst ){
-   this->Fill( dVal , w , false);
+void ExtendedObjectProperty::Fill(double dVal , double w , std::map<TString,double> WSyst ){
+  this->Fill( dVal , w );
 
   if( WSyst.size() > 0 )
     SystHistos2D[ SampleNameForSyst ]->Fill( dVal , w );
-
+  
   for(auto ws : WSyst){
     SystHistos[ ws.first ]->Fill( dVal , ws.second ); 
     SystHistos2D[ ws.first ]->Fill( dVal , ws.second ); 
   }
 }
 
-void ExtendedObjectProperty::Fill(double dVal , double w , bool isPSeudoData , bool iso ){
-  if( CurrentSampleSName == "QCD" ){
-    if( iso ){
-      nISOQCD += w ;
-      w = 0.0;
-    }else
-      w = 1.0;
-    isPSeudoData = false;
-  }
-
-  //if( CurrentIsData ){
-  isPSeudoData = false;
-  //   w = 1.0;
-  // }
-
+void ExtendedObjectProperty::Fill(double dVal , double w ){
   if( theH ){
-    if(Labels){
-      TString value = (*Labels)[ int(dVal-0.5) ];
-      theH->Fill( value , w );
-
-      // if( w < 0.0 )
-      // 	cout << theH_N << " " << CurrentSampleSName << endl;
-      if( theH_N && w < 0.0 ){
-	theH_N->Fill( value , w);
-	//cout << value << endl;
-      }
-      if( theH_P && w > 0.0 )
-	theH_P->Fill( value , w);
-
-      if(isPSeudoData)
-	allHistos["data"]->Fill( value , fabs(w) < 1.0 ? w/fabs(w) : w  );
-    }else{
-      theH->Fill( dVal , w);
-
-      if( theH_N && w < 0.0 ){
-	theH_N->Fill( dVal , w);
-      }
-      if( theH_P && w > 0.0 )
-	theH_P->Fill( dVal , w);
-
-      if(isPSeudoData)
-	allHistos["data"]->Fill( dVal ,  fabs(w) < 1.0 ? w/fabs(w) : w  );
-    }
-  }else if(tSUSYCatFormula){
-    allHistos["SUSY"]->Fill( dVal , w );
-    int suscat =int(tSUSYCatFormula->EvalInstance(0)) ;
-    if( suscat < int(SUSYNames.size()) ){
-      TString suscatname = SUSYNames[suscat];
-      TString sushistname = "SUSY_" + suscatname ;
-      allHistos[ sushistname ]->Fill( dVal , w );
-    }
+    theH->Fill( dVal , w);
+    if( theH_N && w < 0.0 )
+      theH_N->Fill( dVal , w);
+    if( theH_P && w > 0.0 )
+      theH_P->Fill( dVal , w);
   }
-
-  if( theMCH && CurrentSampleSName != "QCD" )
+  
+  if( theMCH )
     theMCH->Fill(dVal , w);
 }
 
@@ -629,7 +585,7 @@ TCanvas* ExtendedObjectProperty::plotRatioStack(THStack* hstack, TH1* h1_orig, T
   c1->SetFillColor(0);
   c1->SetBorderMode(0);
   c1->SetBorderSize(2);
-  c1->SetLogy();
+  //c1->SetLogy();
   c1->SetTickx(1);
   c1->SetTicky(1);
   c1->SetLeftMargin(0.16);
@@ -980,99 +936,19 @@ void ExtendedObjectProperty::Write( TDirectory* dir , int lumi ,bool plotratiost
   TDirectory* newdir = dir->mkdir(  Name  );
   newdir->cd();
 
-  THStack* h_stack     = new THStack( CutName + "_" + Name, "");
-  TLegend* Legend1 = new TLegend(.71,.54,.91,.92);
-
-  vector< pair<TH1*, Color_t> > susycolors;
 
   for( auto h : allSignedHistos )
     h.second->Write();
 
+  for( auto itr : AllSignificances )
+    itr->Write();
+
+
   for(uint j = 0; j < (NumberOfHistos-SUSYNames.size()); j++){
+    //cout <<  histoNames[j]<< endl;
     theH = allHistos[ histoNames[j] ];
     AddOverAndUnderFlow(theH, true, true);
-
-    if( histoNames[j] == "QCD" ){
-      theH->Scale( nISOQCD / theH->Integral() );
-
-      allHistos["MC"]->Add( theH );
-
-      TH1* hnewqcd = (TH1*) (theH->Clone("hPDQCD"));
-      for(int iii = 1 ; iii <= hnewqcd->GetNbinsX() ; iii++){
-	double val = hnewqcd->GetBinContent(iii);
-	int newval = gRandom->Poisson( val );
-	hnewqcd->SetBinContent( iii , newval );
-	hnewqcd->SetBinError( iii , sqrt(newval) );
-      }
-      allHistos["data"]->Add( hnewqcd );
-    }
-
-    if(j < (NumberOfHistos -SUSYNames.size()- 3)){
-      h_stack  -> Add(theH);
-      Legend1->AddEntry(theH, histoNames[j] , "f");
-    }else if( j == NumberOfHistos-SUSYNames.size()-1 ){
-      Legend1->AddEntry(theH, "data", "pl");
-    }
-
     theH->Write();
-  }
-  int color = 1;
-  for(auto name : SUSYNames){
-    TH1* h3 = allHistos["SUSY_"+name ];
-    h3->Write();
-
-    susycolors.push_back( make_pair( h3 , color ) );
-
-    h3->SetFillColor(0);
-    h3->SetFillStyle(0);
-    h3->SetLineStyle(1);
-    h3->SetLineWidth(4);
-    h3->SetLineColor(color);
-
-    Legend1->AddEntry( h3 , name , "l" );
-    color++;
-  }
-
-  h_stack->Write();
-  Legend1->Write();
-
-  newdir->cd();
-
-  if(plotratiostack){
-    //plotRatioStack(h_stack, allHistos["MC"] , allHistos["data"], allHistos["SUSY"] , logy, false, Name + "_ratio", Legend1, Name, "Events", -10, -10, 2, true , "" , lumi)->Write();    
-    //for(uint i =0 ; i<SUSYNames.size() ; i++){
-    TCanvas* ccc = plotRatioStack(h_stack, allHistos["MC"] , allHistos["data"], susycolors , false, false, Name + "_ratio"+ "_AllSUSY", Legend1, Name, "Events", -10, -10, 2, true , "" , lumi ) ; // , allHistos["SUSY_" + SUSYNames[1]] );
-    //if(Name == "One")
-    //cout << CutName << "--" << allHistos["SUSY_"+SUSYNames[0] ]->GetEntries() << endl;
-
-    //ccc->cd(0);
-    //allHistos["SUSY_" + SUSYNames[1]]->Draw("SAME");
-    ccc->Write();
-    //gSystem->mkdir( CutName );
-    //ccc->SetName( Name );
-    
-    //ccc->SaveAs(CutName + "/" + Name + ".C" );
-    //ccc->SaveAs(CutName + "/" + Name + ".png" );
-    //}
-  }
-  for( std::vector< TGraph* >::const_iterator itr = AllSignificances.begin() ; itr != AllSignificances.end() ; itr++)
-    (*itr)->Write();
-
-  if( allHistos[ SampleNameForSyst ] != NULL ){
-    TDirectory* systdir = newdir->mkdir("Systematics");
-    systdir->cd();
-    TH1* theH = allHistos[ SampleNameForSyst ];
-    for(auto ws : SystHistos){
-      SystHistos[ ws.first ]->Add( theH , -1 ); 
-      SystHistos[ ws.first ]->Multiply( SystHistos[ ws.first ] );
-      for(int binii = 1 ; binii <= theH->GetNbinsX()  ; binii ++ ){
-	SystHistos[ ws.first ]->SetBinContent( binii , sqrt( SystHistos[ ws.first ]->GetBinContent(binii) )/theH->GetBinContent(binii) );
-	SystHistos[ ws.first ]->SetBinError( binii , 0.0001 );
-      }
-      SystHistos2D[ ws.first ]->Write();
-      SystHistos[ ws.first ]->Write();
-    } 
-    SystHistos2D[ SampleNameForSyst ]->Write();
   }
 }
 
@@ -1315,7 +1191,7 @@ void sample::Print(double Weight){
   cout << "looping over :     " <<endl;	
   cout << "   Name:           " << name << endl;
   cout << "   ShortName:      " << sname << endl;
-  cout << "   File:           " << file->GetName() << endl;
+  cout << "   File:           " << (file ? file->GetName() : "Not loaded") << endl;
   cout << "   Events:         " << nevents  << endl;
   cout << "   Events in tree: " << tree->GetEntries() << endl; 
   cout << "   Xsection:       " << xsection << endl;

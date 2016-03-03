@@ -1,0 +1,5 @@
+bin/*
+lib/*
+cp3_condor/TChFARM*
+*/*.pyc
+*/*~

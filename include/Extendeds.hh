@@ -112,7 +112,7 @@ public:
   virtual void Fill(double w = 1.0);
 
   virtual void Fill(double dVal , double w , std::map<TString , double> WSyst );
-  virtual void Fill(double dVal , double w , bool isPSeudoData , bool iso = true );
+  virtual void Fill(double dVal , double w );
 
   void AddOverAndUnderFlow(TH1 * Histo, bool overflow, bool underflow);
 

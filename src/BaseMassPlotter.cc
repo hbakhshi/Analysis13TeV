@@ -11,13 +11,13 @@ BaseMassPlotter::BaseMassPlotter(TString outputdir){
   cout.setf(ios::fixed,ios::floatfield);
 }
 
-void BaseMassPlotter::init(TString filename){
+void BaseMassPlotter::init(TString filename , TString sampleToRun){
   if(fVerbose > 0) cout << "------------------------------------" << endl;
   if(fVerbose > 0) cout << "Initializing MassPlotter ... " << endl;
-  loadSamples(filename);
+  loadSamples(filename , sampleToRun);
 }
 
-void BaseMassPlotter::loadSamples(const char* filename){
+void BaseMassPlotter::loadSamples(const char* filename , TString sampleToRun ){
   fSamples.clear();
   char buffer[200];
   ifstream IN(filename);
@@ -75,12 +75,38 @@ void BaseMassPlotter::loadSamples(const char* filename){
 
       s.tree = new TChain(s.treename); //(TTree*)f->Get("MassTree");
 
-      ((TChain*)(s.tree))->Add( file , 0 );
-      ((TChain*)(s.tree))->LoadTree(0);
+      if( sampleToRun == "all" || sampleToRun == s.name ){
+	if(file.EndsWith(".list")){
+	  
+	  if(fVerbose > 3 )
+	    cout << "start reading " << file << endl;
 
-      if(fVerbose > 3 )
-	cout << "NEntries : " << s.tree->GetEntries() << endl;
-      s.file = ((TChain*)(s.tree))->GetFile() ;
+	  std::ifstream _file(file.Data());
+	  std::string   line;
+
+	  while(std::getline(_file, line)){
+	    std::stringstream   linestream(line);
+	    std::string         file_;
+	    int                 entries;
+	    
+	    std::getline(linestream, file_, '\t');
+
+	    // Read the integers using the operator >>
+	    linestream >> entries ;
+	    ((TChain*)(s.tree))->Add( file_.c_str() , entries );
+	    
+	    if(fVerbose > 3 )
+	      cout << file_ << " " << entries << endl;
+	  }
+	}else
+	  ((TChain*)(s.tree))->Add( file );
+	
+	((TChain*)(s.tree))->LoadTree(0);
+	if(fVerbose > 3 )
+	  cout << "NEntries : " << s.tree->GetEntries() << endl;
+	s.file = ((TChain*)(s.tree))->GetFile() ;
+      }else
+	s.file = NULL;
 
       IN.getline(buffer, 200, '\n');
       sscanf(buffer, "LHEWeight\t%f", &ParValue);
@@ -175,6 +201,9 @@ void BaseMassPlotter::loadSamples(const char* filename){
 	cout << "   Color:          " << s.color << endl;
 	cout << "   UseLHEW:        " << s.UseLHEWeight << endl;
       }
+
+      if( s.nevents != s.tree->GetEntries() )
+	cout << s.name << " has " << s.tree->GetEntries() << " events in trees, while " << s.nevents << " are mentioned in the sample file" << endl;
 
       fSamples.push_back(s);
       counter++;

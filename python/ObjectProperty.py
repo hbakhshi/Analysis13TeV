@@ -2,6 +2,11 @@ from ROOT import TDirectory, TH1D, TCanvas, TList, TFile, TAxis, TPad, gPad, THS
 import re
 from math import sqrt
 
+def correctforlumi( val,err ):
+    val *= (2290.0/2246.0)
+    err *= (2290.0/2246.0)
+    return (val ,err)
+
 class ObjectProperty:
     def __init__(self, directory , signalname , ignorelist = [] ):
         self.BKGs = []
@@ -48,29 +53,40 @@ class ObjectProperty:
         print "Sum" + " | " + self.GetFormattedIntegral( "MC" )
         print "Data | " + self.GetFormattedIntegral("Data") 
 
-    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f},{1:.2f}" ):
+    def GetFormattedBinContent( self, name , biN , formaT = "{0:.2f}" ):
         hist = getattr( self , name )
         val = hist.GetBinContent( biN )
         err = hist.GetBinError( biN )
         if( not name == "Data" ):
-            val *= (41.9/41.0)
-            err *= (41.9/41.0)
+            val , err = correctforlumi( val ,err )
         return formaT.format( val , err )
     def PrintCutFlowTable(self):
         firstLine = " | - | " + self.SignalName + " | " 
         for bkg in self.BKGs :
             firstLine += bkg + " | "
-        firstLine += " MC | Data | Data/MC |"
+        firstLine += " MC | Data | Data/MC | SumMC |"
         print firstLine
 
         for bin in range(1,self.NBins+1):
             cutName = self.Signal.GetXaxis().GetBinLabel(bin)
             if cutName == "":
                 cutName = "{0:.0f}-{1:.0f}".format(self.Signal.GetXaxis().GetBinLowEdge(bin) , self.Signal.GetXaxis().GetBinUpEdge(bin) )
-            line = " | " + cutName + " | " + self.GetFormattedBinContent( "Signal" , bin ) + " | "
+
+            val,err = correctforlumi( getattr(self, "Signal").GetBinContent( bin ) , getattr(self, "Signal").GetBinError( bin ) )
+            sumMc = val
+            errSumMc = err*err
+
+            format1 = "{0:.2f}+-{1:.2f}"
+            format2 = "{0:.2f}"
+
+            line = " | " + cutName + " | " + self.GetFormattedBinContent( "Signal" , bin , format1 ) + " | "
             for bkg in self.BKGs :
-                line += self.GetFormattedBinContent(bkg,bin) + " | "
-            line += self.GetFormattedBinContent("MC" , bin , "{0:.2f}$\pm${1:.2f}" ) + " | " + self.GetFormattedBinContent("Data" , bin) + "|"
+                line += self.GetFormattedBinContent(bkg,bin, format1) + " | "
+                val,err = correctforlumi( getattr(self, bkg).GetBinContent( bin ) , getattr(self, bkg).GetBinError( bin ) )
+                sumMc += val
+                errSumMc += err*err
+
+            line += self.GetFormattedBinContent("MC" , bin , format1  ) + " | " + self.GetFormattedBinContent("Data" , bin ) + "|"
             data = getattr(self, "Data").GetBinContent( bin )
             dataErr = getattr(self, "Data").GetBinError( bin )
 
@@ -84,6 +100,7 @@ class ObjectProperty:
                 dataOmcErr = dataOmc*sqrt( dataErr*dataErr/(data*data) + mcErr*mcErr/(mc*mc) )
 
             line += "{0:.2f}+-{1:.2f}".format( dataOmc , dataOmcErr ) + "|"
+            line += "{0:.2f}+-{1:.2f}".format( sumMc , sqrt(errSumMc) ) + "|"
             print line
 
     def GetSumBKGs(self):
@@ -253,14 +270,15 @@ def TChannel_JPCSV():
 
 
 def TChannel_CutFlow():
-    f = TFile.Open("MassPlots/spring_dcsonlydata41_2j1t_VJetsSF1NewCFT.root")
-    dir = f.GetDirectory("cutflowtable") 
-    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P"] )
-    cutflowtable.Data.SetBinContent(1, 334639)
-    cutflowtable.Data.SetBinContent(2, 11537)
-    cutflowtable.Data.SetBinContent(3, 583)
-    cutflowtable.Data.SetBinContent(4, 376)
-    cutflowtable.Data.SetBinContent(5, 231)
+    f = TFile.Open("../TChFARM_V4/outputs/TChannel_V4.root")
+    #dir = f.GetDirectory("iso2j1t/cft") 
+    dir = f.GetDirectory("iso2j1t/muCharge") 
+    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P" , "QCD1"  ] )
+    # cutflowtable.Data.SetBinContent(1, 334639)
+    # cutflowtable.Data.SetBinContent(2, 11537)
+    # cutflowtable.Data.SetBinContent(3, 583)
+    # cutflowtable.Data.SetBinContent(4, 376)
+    # cutflowtable.Data.SetBinContent(5, 231)
     cutflowtable.PrintCutFlowTable()
 
 def TChannel_CutFlowW1():

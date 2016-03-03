@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sat Nov 28 14:20:58 2015 by ROOT version 6.02/05
+// Thu Feb 18 17:02:21 2016 by ROOT version 6.02/13
 // from TTree ttDM__noSyst/ttDM__noSyst
-// found on file: /cmsdata2/hbakhshi/tchannel25ns/Trees/ST_tW_antitop.root
+// found on file: WJets_MG_TChannel_Tree_1.root
 //////////////////////////////////////////////////////////
 
 #ifndef SingleTopTree_h
@@ -22,7 +22,8 @@ public :
   vector<int> TightIso06Muons;
   vector<int> TightIso12Muons;
   vector<int> Tight12IsoMuons;
-  vector<int> LooseMuons;
+  vector<int> LooseMuonsQCD;
+  vector<int> LooseMuonsSignal;
   vector<int> VetoElectrons;
   vector<int> Jets;
   vector<int> bJets;
@@ -45,6 +46,7 @@ public :
    Float_t         met_Py;
    Float_t         met_uncorPhi;
    Float_t         met_uncorPt;
+   Float_t         met_uncorSumEt;
    Float_t         met_CorrPt;
    Float_t         met_CorrPhi;
    Int_t           met_size;
@@ -56,14 +58,11 @@ public :
    Float_t         muons_IsLooseMuon[10];
    Float_t         muons_IsTightMuon[10];
    Float_t         muons_Iso04[10];
-   Float_t         muons_SFTrigger[10];
-   Float_t         muons_SFReco[10];
-   Float_t         muons_isQCD[10];
    Int_t           muons_size;
    Float_t         electrons_E[10];
    Float_t         electrons_Pt[10];
-   Float_t         electrons_Eta[10];
    Float_t         electrons_Phi[10];
+   Float_t         electrons_Eta[10];
    Float_t         electrons_Iso03[10];
    Float_t         electrons_isVeto[10];
    Float_t         electrons_isLoose[10];
@@ -74,17 +73,13 @@ public :
    Float_t         electrons_vidMedium[10];
    Float_t         electrons_vidTight[10];
    Float_t         electrons_vidVeto[10];
-   Float_t         electrons_SFTrigger[10];
-   Float_t         electrons_SFReco[10];
-   Float_t         electrons_isQCD[10];
-   Float_t         electrons_PassesDRmu[10];
    Int_t           electrons_size;
    Float_t         jetsAK4_E[20];
    Float_t         jetsAK4_Pt[20];
    Float_t         jetsAK4_Eta[20];
-   Float_t         jetsAK4_Phi[20];
    Float_t         jetsAK4_PartonFlavour[20];
-   Float_t         jetsAK4_CSV[20];
+   Float_t         jetsAK4_Phi[20];
+   Float_t         jetsAK4_CSVv2[20];
    Float_t         jetsAK4_GenJetEta[20];
    Float_t         jetsAK4_GenJetPt[20];
    Float_t         jetsAK4_CorrPt[20];
@@ -108,12 +103,6 @@ public :
    Float_t         jetsAK4_JetID_neutralHadronEnergyFraction[20];
    Float_t         jetsAK4_JetID_neutralMultiplicity[20];
    Int_t           jetsAK4_size;
-   Float_t         jetsAK4NoHF_E[20];
-   Float_t         jetsAK4NoHF_Pt[20];
-   Float_t         jetsAK4NoHF_Eta[20];
-   Float_t         jetsAK4NoHF_Phi[20];
-   Int_t           jetsAK4NoHF_size;
-   Float_t         Event_weight;
    Float_t         Event_nTightMuons;
    Float_t         Event_nSoftMuons;
    Float_t         Event_nLooseMuons;
@@ -121,13 +110,6 @@ public :
    Float_t         Event_nMediumElectrons;
    Float_t         Event_nLooseElectrons;
    Float_t         Event_nVetoElectrons;
-   Float_t         Event_nElectronsSF;
-   Float_t         Event_nMuonsSF;
-   Float_t         Event_nCSVTJets;
-   Float_t         Event_nCSVMJets;
-   Float_t         Event_nCSVLJets;
-   Float_t         Event_nTightJets;
-   Float_t         Event_nLooseJets;
    Float_t         Event_bWeight0CSVT;
    Float_t         Event_bWeight1CSVT;
    Float_t         Event_bWeight2CSVT;
@@ -175,9 +157,12 @@ public :
    Float_t         Event_bWeightBTagDown2CSVL;
    Float_t         Event_LHEWeightSign;
    Float_t         Event_LHEWeight;
-   ULong64_t       Event_EventNumber;
+   Int_t           Event_EventNumber;
    Float_t         Event_LumiBlock;
    Float_t         Event_RunNumber;
+   Float_t         Event_mu_eff;
+   Float_t         Event_mu_eff_up;
+   Float_t         Event_mu_eff_down;
    Float_t         Event_nPV;
    Float_t         Event_nGoodPV;
    Float_t         Event_passesFlag_CSCTightHaloFilter;
@@ -191,25 +176,14 @@ public :
    Float_t         Event_prescaleHLT_IsoMu20_v2;
    Float_t         Event_passesHLT_IsoMu20_v3;
    Float_t         Event_prescaleHLT_IsoMu20_v3;
-   Float_t         Event_passesHLT_IsoMu20_eta2p1_v1;
-   Float_t         Event_prescaleHLT_IsoMu20_eta2p1_v1;
-   Float_t         Event_passesHLT_IsoMu20_eta2p1_v2;
-   Float_t         Event_prescaleHLT_IsoMu20_eta2p1_v2;
-   Float_t         Event_passesHLT_IsoTkMu20_v1;
-   Float_t         Event_prescaleHLT_IsoTkMu20_v1;
-   Float_t         Event_passesHLT_IsoTkMu20_v2;
-   Float_t         Event_prescaleHLT_IsoTkMu20_v2;
-   Float_t         Event_passesHLT_IsoTkMu20_eta2p1_v1;
-   Float_t         Event_prescaleHLT_IsoTkMu20_eta2p1_v1;
-   Float_t         Event_passesHLT_IsoTkMu20_eta2p1_v2;
-   Float_t         Event_prescaleHLT_IsoTkMu20_eta2p1_v2;
-   Float_t         Event_passesHLT_IsoMu20_eta2p1_IterTrk02_v1;
-   Float_t         Event_prescaleHLT_IsoMu20_eta2p1_IterTrk02_v1;
+   Float_t         Event_passesHLT_IsoMu20_v4;
+   Float_t         Event_prescaleHLT_IsoMu20_v4;
    Float_t         Event_passesLeptonicTriggers;
    Float_t         Event_passesHadronicTriggers;
    Float_t         Event_puWeight;
    Float_t         Event_puWeightUp;
    Float_t         Event_puWeightDown;
+   Float_t         Event_nTruePU;
 
    // List of branches
    TBranch        *b_met_Pt;   //!
@@ -218,6 +192,7 @@ public :
    TBranch        *b_met_Py;   //!
    TBranch        *b_met_uncorPhi;   //!
    TBranch        *b_met_uncorPt;   //!
+   TBranch        *b_met_uncorSumEt;   //!
    TBranch        *b_met_CorrPt;   //!
    TBranch        *b_met_CorrPhi;   //!
    TBranch        *b_met_size;   //!
@@ -229,14 +204,11 @@ public :
    TBranch        *b_muons_IsLooseMuon;   //!
    TBranch        *b_muons_IsTightMuon;   //!
    TBranch        *b_muons_Iso04;   //!
-   TBranch        *b_muons_SFTrigger;   //!
-   TBranch        *b_muons_SFReco;   //!
-   TBranch        *b_muons_isQCD;   //!
    TBranch        *b_muons_size;   //!
    TBranch        *b_electrons_E;   //!
    TBranch        *b_electrons_Pt;   //!
-   TBranch        *b_electrons_Eta;   //!
    TBranch        *b_electrons_Phi;   //!
+   TBranch        *b_electrons_Eta;   //!
    TBranch        *b_electrons_Iso03;   //!
    TBranch        *b_electrons_isVeto;   //!
    TBranch        *b_electrons_isLoose;   //!
@@ -247,17 +219,13 @@ public :
    TBranch        *b_electrons_vidMedium;   //!
    TBranch        *b_electrons_vidTight;   //!
    TBranch        *b_electrons_vidVeto;   //!
-   TBranch        *b_electrons_SFTrigger;   //!
-   TBranch        *b_electrons_SFReco;   //!
-   TBranch        *b_electrons_isQCD;   //!
-   TBranch        *b_electrons_PassesDRmu;   //!
    TBranch        *b_electrons_size;   //!
    TBranch        *b_jetsAK4_E;   //!
    TBranch        *b_jetsAK4_Pt;   //!
    TBranch        *b_jetsAK4_Eta;   //!
-   TBranch        *b_jetsAK4_Phi;   //!
    TBranch        *b_jetsAK4_PartonFlavour;   //!
-   TBranch        *b_jetsAK4_CSV;   //!
+   TBranch        *b_jetsAK4_Phi;   //!
+   TBranch        *b_jetsAK4_CSVv2;   //!
    TBranch        *b_jetsAK4_GenJetEta;   //!
    TBranch        *b_jetsAK4_GenJetPt;   //!
    TBranch        *b_jetsAK4_CorrPt;   //!
@@ -281,12 +249,6 @@ public :
    TBranch        *b_jetsAK4_JetID_neutralHadronEnergyFraction;   //!
    TBranch        *b_jetsAK4_JetID_neutralMultiplicity;   //!
    TBranch        *b_jetsAK4_size;   //!
-   TBranch        *b_jetsAK4NoHF_E;   //!
-   TBranch        *b_jetsAK4NoHF_Pt;   //!
-   TBranch        *b_jetsAK4NoHF_Eta;   //!
-   TBranch        *b_jetsAK4NoHF_Phi;   //!
-   TBranch        *b_jetsAK4NoHF_size;   //!
-   TBranch        *b_Event_weight;   //!
    TBranch        *b_Event_nTightMuons;   //!
    TBranch        *b_Event_nSoftMuons;   //!
    TBranch        *b_Event_nLooseMuons;   //!
@@ -294,13 +256,6 @@ public :
    TBranch        *b_Event_nMediumElectrons;   //!
    TBranch        *b_Event_nLooseElectrons;   //!
    TBranch        *b_Event_nVetoElectrons;   //!
-   TBranch        *b_Event_nElectronsSF;   //!
-   TBranch        *b_Event_nMuonsSF;   //!
-   TBranch        *b_Event_nCSVTJets;   //!
-   TBranch        *b_Event_nCSVMJets;   //!
-   TBranch        *b_Event_nCSVLJets;   //!
-   TBranch        *b_Event_nTightJets;   //!
-   TBranch        *b_Event_nLooseJets;   //!
    TBranch        *b_Event_bWeight0CSVT;   //!
    TBranch        *b_Event_bWeight1CSVT;   //!
    TBranch        *b_Event_bWeight2CSVT;   //!
@@ -351,6 +306,9 @@ public :
    TBranch        *b_Event_EventNumber;   //!
    TBranch        *b_Event_LumiBlock;   //!
    TBranch        *b_Event_RunNumber;   //!
+   TBranch        *b_Event_mu_eff;   //!
+   TBranch        *b_Event_mu_eff_up;   //!
+   TBranch        *b_Event_mu_eff_down;   //!
    TBranch        *b_Event_nPV;   //!
    TBranch        *b_Event_nGoodPV;   //!
    TBranch        *b_Event_passesFlag_CSCTightHaloFilter;   //!
@@ -364,25 +322,14 @@ public :
    TBranch        *b_Event_prescaleHLT_IsoMu20_v2;   //!
    TBranch        *b_Event_passesHLT_IsoMu20_v3;   //!
    TBranch        *b_Event_prescaleHLT_IsoMu20_v3;   //!
-   TBranch        *b_Event_passesHLT_IsoMu20_eta2p1_v1;   //!
-   TBranch        *b_Event_prescaleHLT_IsoMu20_eta2p1_v1;   //!
-   TBranch        *b_Event_passesHLT_IsoMu20_eta2p1_v2;   //!
-   TBranch        *b_Event_prescaleHLT_IsoMu20_eta2p1_v2;   //!
-   TBranch        *b_Event_passesHLT_IsoTkMu20_v1;   //!
-   TBranch        *b_Event_prescaleHLT_IsoTkMu20_v1;   //!
-   TBranch        *b_Event_passesHLT_IsoTkMu20_v2;   //!
-   TBranch        *b_Event_prescaleHLT_IsoTkMu20_v2;   //!
-   TBranch        *b_Event_passesHLT_IsoTkMu20_eta2p1_v1;   //!
-   TBranch        *b_Event_prescaleHLT_IsoTkMu20_eta2p1_v1;   //!
-   TBranch        *b_Event_passesHLT_IsoTkMu20_eta2p1_v2;   //!
-   TBranch        *b_Event_prescaleHLT_IsoTkMu20_eta2p1_v2;   //!
-   TBranch        *b_Event_passesHLT_IsoMu20_eta2p1_IterTrk02_v1;   //!
-   TBranch        *b_Event_prescaleHLT_IsoMu20_eta2p1_IterTrk02_v1;   //!
+   TBranch        *b_Event_passesHLT_IsoMu20_v4;   //!
+   TBranch        *b_Event_prescaleHLT_IsoMu20_v4;   //!
    TBranch        *b_Event_passesLeptonicTriggers;   //!
    TBranch        *b_Event_passesHadronicTriggers;   //!
    TBranch        *b_Event_puWeight;   //!
    TBranch        *b_Event_puWeightUp;   //!
    TBranch        *b_Event_puWeightDown;   //!
+   TBranch        *b_Event_nTruePU;   //!
 
    SingleTopTree(TTree *tree=0);
    virtual ~SingleTopTree();
@@ -403,11 +350,11 @@ SingleTopTree::SingleTopTree(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/cmsdata2/hbakhshi/tchannel25ns/Trees/ST_tW_antitop.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("WJets_MG_TChannel_Tree_1.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/cmsdata2/hbakhshi/tchannel25ns/Trees/ST_tW_antitop.root");
+         f = new TFile("WJets_MG_TChannel_Tree_1.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("/cmsdata2/hbakhshi/tchannel25ns/Trees/ST_tW_antitop.root:/DMTreesDumper");
+      TDirectory * dir = (TDirectory*)f->Get("WJets_MG_TChannel_Tree_1.root:/DMTreesDumper");
       dir->GetObject("ttDM__noSyst",tree);
 
    }
@@ -461,6 +408,7 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("met_Py", &met_Py, &b_met_Py);
    fChain->SetBranchAddress("met_uncorPhi", &met_uncorPhi, &b_met_uncorPhi);
    fChain->SetBranchAddress("met_uncorPt", &met_uncorPt, &b_met_uncorPt);
+   fChain->SetBranchAddress("met_uncorSumEt", &met_uncorSumEt, &b_met_uncorSumEt);
    fChain->SetBranchAddress("met_CorrPt", &met_CorrPt, &b_met_CorrPt);
    fChain->SetBranchAddress("met_CorrPhi", &met_CorrPhi, &b_met_CorrPhi);
    fChain->SetBranchAddress("met_size", &met_size, &b_met_size);
@@ -472,15 +420,11 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("muons_IsLooseMuon", muons_IsLooseMuon, &b_muons_IsLooseMuon);
    fChain->SetBranchAddress("muons_IsTightMuon", muons_IsTightMuon, &b_muons_IsTightMuon);
    fChain->SetBranchAddress("muons_Iso04", muons_Iso04, &b_muons_Iso04);
-   fChain->SetBranchAddress("muons_SFTrigger", muons_SFTrigger, &b_muons_SFTrigger);
-   fChain->SetBranchAddress("muons_SFReco", muons_SFReco, &b_muons_SFReco);
-   fChain->SetBranchAddress("muons_isQCD", muons_isQCD, &b_muons_isQCD);
    fChain->SetBranchAddress("muons_size", &muons_size, &b_muons_size);
    fChain->SetBranchAddress("electrons_E", electrons_E, &b_electrons_E);
    fChain->SetBranchAddress("electrons_Pt", electrons_Pt, &b_electrons_Pt);
    fChain->SetBranchAddress("electrons_Eta", electrons_Eta, &b_electrons_Eta);
    fChain->SetBranchAddress("electrons_Phi", electrons_Phi, &b_electrons_Phi);
-//    fChain->SetBranchAddress("electrons_Eta", electrons_Eta, &b_electrons_Eta);
    fChain->SetBranchAddress("electrons_Iso03", electrons_Iso03, &b_electrons_Iso03);
    fChain->SetBranchAddress("electrons_isVeto", electrons_isVeto, &b_electrons_isVeto);
    fChain->SetBranchAddress("electrons_isLoose", electrons_isLoose, &b_electrons_isLoose);
@@ -491,18 +435,13 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("electrons_vidMedium", electrons_vidMedium, &b_electrons_vidMedium);
    fChain->SetBranchAddress("electrons_vidTight", electrons_vidTight, &b_electrons_vidTight);
    fChain->SetBranchAddress("electrons_vidVeto", electrons_vidVeto, &b_electrons_vidVeto);
-   fChain->SetBranchAddress("electrons_SFTrigger", electrons_SFTrigger, &b_electrons_SFTrigger);
-   fChain->SetBranchAddress("electrons_SFReco", electrons_SFReco, &b_electrons_SFReco);
-   fChain->SetBranchAddress("electrons_isQCD", electrons_isQCD, &b_electrons_isQCD);
-   fChain->SetBranchAddress("electrons_PassesDRmu", electrons_PassesDRmu, &b_electrons_PassesDRmu);
    fChain->SetBranchAddress("electrons_size", &electrons_size, &b_electrons_size);
    fChain->SetBranchAddress("jetsAK4_E", jetsAK4_E, &b_jetsAK4_E);
    fChain->SetBranchAddress("jetsAK4_Pt", jetsAK4_Pt, &b_jetsAK4_Pt);
    fChain->SetBranchAddress("jetsAK4_Eta", jetsAK4_Eta, &b_jetsAK4_Eta);
    fChain->SetBranchAddress("jetsAK4_Phi", jetsAK4_Phi, &b_jetsAK4_Phi);
    fChain->SetBranchAddress("jetsAK4_PartonFlavour", jetsAK4_PartonFlavour, &b_jetsAK4_PartonFlavour);
-//    fChain->SetBranchAddress("jetsAK4_Phi", jetsAK4_Phi, &b_jetsAK4_Phi);
-   fChain->SetBranchAddress("jetsAK4_CSV", jetsAK4_CSV, &b_jetsAK4_CSV);
+   fChain->SetBranchAddress("jetsAK4_CSVv2", jetsAK4_CSVv2, &b_jetsAK4_CSVv2);
    fChain->SetBranchAddress("jetsAK4_GenJetEta", jetsAK4_GenJetEta, &b_jetsAK4_GenJetEta);
    fChain->SetBranchAddress("jetsAK4_GenJetPt", jetsAK4_GenJetPt, &b_jetsAK4_GenJetPt);
    fChain->SetBranchAddress("jetsAK4_CorrPt", jetsAK4_CorrPt, &b_jetsAK4_CorrPt);
@@ -526,12 +465,6 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("jetsAK4_JetID_neutralHadronEnergyFraction", jetsAK4_JetID_neutralHadronEnergyFraction, &b_jetsAK4_JetID_neutralHadronEnergyFraction);
    fChain->SetBranchAddress("jetsAK4_JetID_neutralMultiplicity", jetsAK4_JetID_neutralMultiplicity, &b_jetsAK4_JetID_neutralMultiplicity);
    fChain->SetBranchAddress("jetsAK4_size", &jetsAK4_size, &b_jetsAK4_size);
-   fChain->SetBranchAddress("jetsAK4NoHF_E", jetsAK4NoHF_E, &b_jetsAK4NoHF_E);
-   fChain->SetBranchAddress("jetsAK4NoHF_Pt", jetsAK4NoHF_Pt, &b_jetsAK4NoHF_Pt);
-   fChain->SetBranchAddress("jetsAK4NoHF_Eta", jetsAK4NoHF_Eta, &b_jetsAK4NoHF_Eta);
-   fChain->SetBranchAddress("jetsAK4NoHF_Phi", jetsAK4NoHF_Phi, &b_jetsAK4NoHF_Phi);
-   fChain->SetBranchAddress("jetsAK4NoHF_size", &jetsAK4NoHF_size, &b_jetsAK4NoHF_size);
-   fChain->SetBranchAddress("Event_weight", &Event_weight, &b_Event_weight);
    fChain->SetBranchAddress("Event_nTightMuons", &Event_nTightMuons, &b_Event_nTightMuons);
    fChain->SetBranchAddress("Event_nSoftMuons", &Event_nSoftMuons, &b_Event_nSoftMuons);
    fChain->SetBranchAddress("Event_nLooseMuons", &Event_nLooseMuons, &b_Event_nLooseMuons);
@@ -539,13 +472,6 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("Event_nMediumElectrons", &Event_nMediumElectrons, &b_Event_nMediumElectrons);
    fChain->SetBranchAddress("Event_nLooseElectrons", &Event_nLooseElectrons, &b_Event_nLooseElectrons);
    fChain->SetBranchAddress("Event_nVetoElectrons", &Event_nVetoElectrons, &b_Event_nVetoElectrons);
-   fChain->SetBranchAddress("Event_nElectronsSF", &Event_nElectronsSF, &b_Event_nElectronsSF);
-   fChain->SetBranchAddress("Event_nMuonsSF", &Event_nMuonsSF, &b_Event_nMuonsSF);
-   fChain->SetBranchAddress("Event_nCSVTJets", &Event_nCSVTJets, &b_Event_nCSVTJets);
-   fChain->SetBranchAddress("Event_nCSVMJets", &Event_nCSVMJets, &b_Event_nCSVMJets);
-   fChain->SetBranchAddress("Event_nCSVLJets", &Event_nCSVLJets, &b_Event_nCSVLJets);
-   fChain->SetBranchAddress("Event_nTightJets", &Event_nTightJets, &b_Event_nTightJets);
-   fChain->SetBranchAddress("Event_nLooseJets", &Event_nLooseJets, &b_Event_nLooseJets);
    fChain->SetBranchAddress("Event_bWeight0CSVT", &Event_bWeight0CSVT, &b_Event_bWeight0CSVT);
    fChain->SetBranchAddress("Event_bWeight1CSVT", &Event_bWeight1CSVT, &b_Event_bWeight1CSVT);
    fChain->SetBranchAddress("Event_bWeight2CSVT", &Event_bWeight2CSVT, &b_Event_bWeight2CSVT);
@@ -596,6 +522,9 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("Event_EventNumber", &Event_EventNumber, &b_Event_EventNumber);
    fChain->SetBranchAddress("Event_LumiBlock", &Event_LumiBlock, &b_Event_LumiBlock);
    fChain->SetBranchAddress("Event_RunNumber", &Event_RunNumber, &b_Event_RunNumber);
+   fChain->SetBranchAddress("Event_mu_eff", &Event_mu_eff, &b_Event_mu_eff);
+   fChain->SetBranchAddress("Event_mu_eff_up", &Event_mu_eff_up, &b_Event_mu_eff_up);
+   fChain->SetBranchAddress("Event_mu_eff_down", &Event_mu_eff_down, &b_Event_mu_eff_down);
    fChain->SetBranchAddress("Event_nPV", &Event_nPV, &b_Event_nPV);
    fChain->SetBranchAddress("Event_nGoodPV", &Event_nGoodPV, &b_Event_nGoodPV);
    fChain->SetBranchAddress("Event_passesFlag_CSCTightHaloFilter", &Event_passesFlag_CSCTightHaloFilter, &b_Event_passesFlag_CSCTightHaloFilter);
@@ -609,25 +538,14 @@ void SingleTopTree::Init(TTree *tree)
    fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_v2", &Event_prescaleHLT_IsoMu20_v2, &b_Event_prescaleHLT_IsoMu20_v2);
    fChain->SetBranchAddress("Event_passesHLT_IsoMu20_v3", &Event_passesHLT_IsoMu20_v3, &b_Event_passesHLT_IsoMu20_v3);
    fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_v3", &Event_prescaleHLT_IsoMu20_v3, &b_Event_prescaleHLT_IsoMu20_v3);
-   fChain->SetBranchAddress("Event_passesHLT_IsoMu20_eta2p1_v1", &Event_passesHLT_IsoMu20_eta2p1_v1, &b_Event_passesHLT_IsoMu20_eta2p1_v1);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_eta2p1_v1", &Event_prescaleHLT_IsoMu20_eta2p1_v1, &b_Event_prescaleHLT_IsoMu20_eta2p1_v1);
-   fChain->SetBranchAddress("Event_passesHLT_IsoMu20_eta2p1_v2", &Event_passesHLT_IsoMu20_eta2p1_v2, &b_Event_passesHLT_IsoMu20_eta2p1_v2);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_eta2p1_v2", &Event_prescaleHLT_IsoMu20_eta2p1_v2, &b_Event_prescaleHLT_IsoMu20_eta2p1_v2);
-   fChain->SetBranchAddress("Event_passesHLT_IsoTkMu20_v1", &Event_passesHLT_IsoTkMu20_v1, &b_Event_passesHLT_IsoTkMu20_v1);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoTkMu20_v1", &Event_prescaleHLT_IsoTkMu20_v1, &b_Event_prescaleHLT_IsoTkMu20_v1);
-   fChain->SetBranchAddress("Event_passesHLT_IsoTkMu20_v2", &Event_passesHLT_IsoTkMu20_v2, &b_Event_passesHLT_IsoTkMu20_v2);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoTkMu20_v2", &Event_prescaleHLT_IsoTkMu20_v2, &b_Event_prescaleHLT_IsoTkMu20_v2);
-   fChain->SetBranchAddress("Event_passesHLT_IsoTkMu20_eta2p1_v1", &Event_passesHLT_IsoTkMu20_eta2p1_v1, &b_Event_passesHLT_IsoTkMu20_eta2p1_v1);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoTkMu20_eta2p1_v1", &Event_prescaleHLT_IsoTkMu20_eta2p1_v1, &b_Event_prescaleHLT_IsoTkMu20_eta2p1_v1);
-   fChain->SetBranchAddress("Event_passesHLT_IsoTkMu20_eta2p1_v2", &Event_passesHLT_IsoTkMu20_eta2p1_v2, &b_Event_passesHLT_IsoTkMu20_eta2p1_v2);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoTkMu20_eta2p1_v2", &Event_prescaleHLT_IsoTkMu20_eta2p1_v2, &b_Event_prescaleHLT_IsoTkMu20_eta2p1_v2);
-   fChain->SetBranchAddress("Event_passesHLT_IsoMu20_eta2p1_IterTrk02_v1", &Event_passesHLT_IsoMu20_eta2p1_IterTrk02_v1, &b_Event_passesHLT_IsoMu20_eta2p1_IterTrk02_v1);
-   fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_eta2p1_IterTrk02_v1", &Event_prescaleHLT_IsoMu20_eta2p1_IterTrk02_v1, &b_Event_prescaleHLT_IsoMu20_eta2p1_IterTrk02_v1);
+   fChain->SetBranchAddress("Event_passesHLT_IsoMu20_v4", &Event_passesHLT_IsoMu20_v4, &b_Event_passesHLT_IsoMu20_v4);
+   fChain->SetBranchAddress("Event_prescaleHLT_IsoMu20_v4", &Event_prescaleHLT_IsoMu20_v4, &b_Event_prescaleHLT_IsoMu20_v4);
    fChain->SetBranchAddress("Event_passesLeptonicTriggers", &Event_passesLeptonicTriggers, &b_Event_passesLeptonicTriggers);
    fChain->SetBranchAddress("Event_passesHadronicTriggers", &Event_passesHadronicTriggers, &b_Event_passesHadronicTriggers);
    fChain->SetBranchAddress("Event_puWeight", &Event_puWeight, &b_Event_puWeight);
    fChain->SetBranchAddress("Event_puWeightUp", &Event_puWeightUp, &b_Event_puWeightUp);
    fChain->SetBranchAddress("Event_puWeightDown", &Event_puWeightDown, &b_Event_puWeightDown);
+   fChain->SetBranchAddress("Event_nTruePU", &Event_nTruePU, &b_Event_nTruePU);
    Notify();
 }
 

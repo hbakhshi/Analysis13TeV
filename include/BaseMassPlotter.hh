@@ -61,8 +61,8 @@ public:
   TString fOutputDir;
   int fVerbose;
   void setVerbose(int v){ fVerbose = v;};
-  void init(TString filename = "samples.dat");
-  void loadSamples(const char* filename = "samples.dat");
+  void init(TString filename = "samples.dat" , TString sampleToRun = "all");
+  void loadSamples(const char* filename = "samples.dat" ,  TString sampleToRun = "all");
   std::vector<sample>  fSamples;  
 
 

@@ -1,0 +1,51 @@
+############################################################################################
+GENERAL
+Path             ///storage/data/cms/users/hbakhshiansohi/TChannel25nsFiles/76/Sync/SyncSoureekTrees/
+#__________________________________________________________________________________________
+# list of samples
+#
+## -------- Signal --------
+
+SAMPLE
+Name            Data
+SName           Data
+ShapeName       Data
+File            Synchronization_76X_SingleMu.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection        1
+Kfact           1.
+Lumi            2246
+Type            data
+Color           1
+NEvents         49964
+
+
+SAMPLE
+Name            Signal
+SName           TChannel
+ShapeName       Signal
+File            Synchronization_76X_TChannel.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection        44.07048
+Kfact           1.
+Lumi            2246
+Type            mc
+Color           1
+NEvents         49965
+
+SAMPLE
+Name		QCDMuEnriched
+SName		QCD1
+ShapeName	QCD
+File          	Synchronization_76X_QCD.root
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection  	114391.2      381304*0.3 for DD corrections
+Kfact           1.
+Lumi            2246
+Type            mc
+Color		417
+NEvents		49914
+
