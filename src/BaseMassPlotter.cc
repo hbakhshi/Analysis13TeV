@@ -85,6 +85,9 @@ void BaseMassPlotter::loadSamples(const char* filename , TString sampleToRun ){
 	  std::string   line;
 
 	  while(std::getline(_file, line)){
+	    if( line[0] == '#' )
+	      continue;
+
 	    std::stringstream   linestream(line);
 	    std::string         file_;
 	    int                 entries;

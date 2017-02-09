@@ -55,8 +55,8 @@ public:
     float weight;
     float mtw;
     float met;
+    int qcd;
     bool data;
-    bool qcd;
     bool isPositive;
   } info;
   
@@ -74,6 +74,11 @@ public:
     trees["noniso3j2t"] = new TTree("noniso3j2t" , "noniso3j2t");
     trees["noniso3j1t"] = new TTree("noniso3j1t" , "noniso3j1t");
 
+    trees["midiso2j0t"] = new TTree("midiso2j0t" , "midiso2j0t");
+    trees["midiso2j1t"] = new TTree("midiso2j1t" , "midiso2j1t");
+    trees["midiso3j2t"] = new TTree("midiso3j2t" , "midiso3j2t");
+    trees["midiso3j1t"] = new TTree("midiso3j1t" , "midiso3j1t");
+
     for(auto tree : trees){
       //tree.second->Branch( "info" , &info , "weight:mtw:met:data/O:qcd" );
       tree.second->Branch( "weight" , &info.weight );
@@ -89,7 +94,7 @@ public:
 
   void Fill(string channel ,
 	    bool data,
-	    bool qcd,
+	    int qcd,
 	    float weight,
 	    float mtw,
 	    float met,
@@ -109,6 +114,12 @@ public:
 
 class MassPlotterSingleTop : public BaseMassPlotter{
 public:
+#ifdef SingleTopTreeLHEWeights_h
+  TH1* histJPScales[9];
+  TH1* histTMScales[9];
+  TH1* hSumScaleWeights;
+#endif
+
   QCDFitTreeManager* trees;
 
   map<string, ExtendedObjectProperty*> iso2j0tprops;
@@ -120,6 +131,12 @@ public:
   map<string, ExtendedObjectProperty*> noniso2j1tprops;
   map<string, ExtendedObjectProperty*> noniso3j1tprops;
   map<string, ExtendedObjectProperty*> noniso3j2tprops;
+
+  map<string, ExtendedObjectProperty*> midiso2j0tprops;
+  map<string, ExtendedObjectProperty*> midiso2j1tprops;
+  map<string, ExtendedObjectProperty*> midiso3j1tprops;
+  map<string, ExtendedObjectProperty*> midiso3j2tprops;
+
 
   TopUtilities topUtils;
   int lumi;
@@ -150,17 +167,29 @@ void MassPlotterSingleTop::AddProperty(string name , int nbins , double min , do
 }
 
 void MassPlotterSingleTop::Write(TDirectory* theFile){
+
   for( auto selection : all_maps ){
     TDirectory* dir = theFile->mkdir( selection.first.c_str() );
     for( auto prop : *(selection.second) )
       prop.second->Write( dir , lumi , false, false );
   }
 
+#ifdef SingleTopTreeLHEWeights_h
+  theFile->mkdir("iso2j1t_systematics")->cd();
+  int wIndices[9] = {0,1,2,3,4,5,6,7,8};
+  for(auto wi : wIndices){
+    histJPScales[wi]->Write();
+    histTMScales[wi]->Write();
+  }
+  hSumScaleWeights->Write();
+#endif
+
 }
 
 MassPlotterSingleTop::MassPlotterSingleTop(TString outputdir, TDirectory* theFile) : BaseMassPlotter( outputdir ) {
-  all_maps["iso2j0t"] = &iso2j0tprops ;
   all_maps["iso2j1t"] = &iso2j1tprops ;
+#ifndef SingleTopTreeLHEWeights_h
+  all_maps["iso2j0t"] = &iso2j0tprops ;
   all_maps["iso3j2t"] = &iso3j2tprops ;
   all_maps["iso3j1t"] = &iso3j1tprops ;
 
@@ -169,6 +198,12 @@ MassPlotterSingleTop::MassPlotterSingleTop(TString outputdir, TDirectory* theFil
   all_maps["noniso3j2t"] = &noniso3j2tprops ;
   all_maps["noniso3j1t"] = &noniso3j1tprops ;
 
+
+  all_maps["midiso2j0t"] = &midiso2j0tprops ;
+  all_maps["midiso2j1t"] = &midiso2j1tprops ;
+  all_maps["midiso3j2t"] = &midiso3j2tprops ;
+  all_maps["midiso3j1t"] = &midiso3j1tprops ;
+#endif
 
   std::vector<TString> alllabels;
   alllabels.push_back( "NoCut" );
@@ -205,7 +240,9 @@ MassPlotterSingleTop::MassPlotterSingleTop(TString outputdir, TDirectory* theFil
   AddProperty( "nJetsBeforeCut",8 , 0 , 8 );
   AddProperty( "muCharge", 40 , -2 , 2 );
 
+#ifndef SingleTopTreeLHEWeights_h
   trees = new QCDFitTreeManager( theFile );
+#endif
 };
 
 
@@ -233,10 +270,15 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
     }else
       lumi = Sample.lumi; 
 
-    bool qcd = false;
-    if( Sample.sname == "QCD1"){
-      qcd = true;
-    }
+    int qcd = 0;
+    if( Sample.sname == "QCD1")
+      qcd = 1;
+    else if(Sample.sname == "TChannel" || Sample.sname == "Top" )
+      qcd = 2;
+    else if(Sample.sname == "VJets")
+      qcd = 3;
+
+
     cout << " sample data : " << data << " qcd : " << qcd << endl;
   
     double Weight = Sample.xsection * Sample.kfact * Sample.lumi / (Sample.nevents*Sample.PU_avg_weight);
@@ -258,6 +300,16 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
 
     cout << "\t Loop over " << Sample.name << " from " << From << " To " << maxloop <<endl;
 
+#ifdef SingleTopTreeLHEWeights_h
+    int wIndices[9] = {0,1,2,3,4,5,6,7,8};
+    hSumScaleWeights = new TH1D( "hSumScaleWeights" , "" , 10 , 0 , 10 );
+    TH1D hjpetmp("hjPrimeEtaTemplate" , "hjPrimeEtaTemplate" , 10 , 0 , 5 ); 
+    TH1D htmtmp("hTopMassTemplate" , "hTopMassTemplate" , 30 , 100 , 400 ); 
+    for(auto wi : wIndices){
+      histJPScales[wi] = (TH1*)(hjpetmp.Clone(TString::Format( "hjp_s%d" , wi ) ));
+      histTMScales[wi] = (TH1*)(htmtmp.Clone(TString::Format( "htm_s%d" , wi )));
+    }
+#endif
     for (Long64_t jentry=From; jentry<maxloop;jentry++, counter++) {
       Sample.tree->GetEntry(jentry);
       if( lastFileName.compare( ((TChain*)Sample.tree)->GetFile()->GetName() ) != 0 ) {
@@ -286,7 +338,15 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
 	weight *= fTree.Event_LHEWeightSign ;
       }
 
-      vector<string> allchannels = {  "iso2j0t", "iso2j1t" , "iso3j2t" , "iso3j1t" ,  "noniso2j0t", "noniso2j1t" , "noniso3j2t" , "noniso3j1t"};
+#ifdef SingleTopTreeLHEWeights_h
+      for(auto wi : wIndices)
+	hSumScaleWeights->SetBinContent( wi+1 , hSumScaleWeights->GetBinContent(wi+1)+(fTree.GetLHEWeight(wi)/fTree.GetLHEWeight(0)) );
+
+      vector<string> allchannels = {"iso2j1t"} ;
+#else
+      vector<string> allchannels = {"iso2j0t", "iso2j1t" , "iso3j2t" , "iso3j1t" ,  "noniso2j0t", "noniso2j1t" , "noniso3j2t" , "noniso3j1t" , "midiso2j0t", "midiso2j1t" , "midiso3j2t" , "midiso3j1t"};
+#endif
+
 
       double cutindex = 0.5;
     
@@ -334,6 +394,14 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
 	    ++channel;
 	}
 
+      if( fTree.TightIso12Muons.size() != 1  )
+	for(channel = allchannels.begin() ; channel != allchannels.end() ;  ){
+	  if( channel->substr(0 , 6) == "midiso" )
+	    channel = allchannels.erase( channel );
+	  else
+	    ++channel;
+	}
+
       if(allchannels.size() == 0 )
 	continue;
     
@@ -358,6 +426,15 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
 	    ++channel;
 	}
 
+      if( fTree.LooseMuonsIntermediate.size() != 0  )
+	for(channel = allchannels.begin() ; channel != allchannels.end() ;  ){
+	  if( channel->substr(0 , 6) == "midiso" )
+	    channel = allchannels.erase( channel );
+	  else
+	    ++channel;
+	}
+
+
       if(allchannels.size() == 0 )
 	continue;
 
@@ -367,9 +444,13 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
       int tightMuIndex = fTree.TightIso06Muons.size() == 1 ? fTree.TightIso06Muons[0] : 
 	(fTree.Tight12IsoMuons.size() == 1 ? fTree.Tight12IsoMuons[0] : -1 ) ;
       if( tightMuIndex < 0 )
+	if( fTree.TightIso12Muons.size()==1 )
+	  tightMuIndex = fTree.TightIso12Muons[0] ;
+
+      if( tightMuIndex < 0 )
 	throw logic_error("inconsistent number of tight muons");
 
-      bool IsQCD = (allchannels[0].substr(0,6)=="noniso") ;
+      //bool IsQCD = (allchannels[0].substr(0,6)=="noniso") ;
 
       Fill( allchannels , "cft" , cutindex , weight );
       Fill( allchannels , "cft_w1" , cutindex , 1.0 );
@@ -447,7 +528,9 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
       double MT = sqrt( 2*fTree.met_Pt* fTree.muons_Pt[tightMuIndex]*(1-TMath::Cos( Util::DeltaPhi(fTree.met_Phi , fTree.muons_Phi[tightMuIndex]) ) )  ) ;
       Fill( allchannels , "MTBeforeCut" ,  MT , weight );
 
+#ifndef SingleTopTreeLHEWeights_h
       trees->Fill(allchannels[0] ,data,qcd,weight,MT,fTree.met_Pt , fTree.muons_Charge[tightMuIndex]>0.0 );
+#endif
 
       if( MT > 50 ){
 	Fill( allchannels , "cft" , cutindex , weight );
@@ -509,6 +592,14 @@ void MassPlotterSingleTop::singleTopAnalysis(Long64_t nevents , TString samplena
       Fill( allchannels , "MTAfterCut" ,  MT , weight );
       Fill( allchannels , "bPt", fTree.jetsAK4_CorrPt[bjIndex] , weight );
       Fill( allchannels , "bEta",fabs( fTree.jetsAK4_Eta[bjIndex] ) , weight );
+
+#ifdef SingleTopTreeLHEWeights_h
+      if( allchannels[0] == "iso2j1t" )
+	for(auto wi : wIndices){
+	  histJPScales[wi]->Fill( fabs( fTree.jetsAK4_Eta[jprimeIndex] ),(weight*fTree.GetLHEWeight(wi)/fTree.GetLHEWeight(0)) );
+	  histTMScales[wi]->Fill( topMass ,(weight*fTree.GetLHEWeight(wi)/fTree.GetLHEWeight(0)) );
+	}
+#endif
     }
   }
 }

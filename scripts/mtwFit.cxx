@@ -13,7 +13,9 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
   // Objects that we need
   TFile *file = TFile::Open( filename );
 
-  TTree* iso_tree = (TTree*)( file->Get( ("Trees/iso" + channel) ) );
+  TFile *fileMG = TFile::Open( "../cp3_condor/TChFARM_V5/outputs/TChannel_V5.root" );
+
+  TTree* iso_tree = (TTree*)( fileMG->Get( ("Trees/iso" + channel) ) );
   TTree* noniso_tree = (TTree*)( file->Get( ("Trees/noniso" + channel)) );
 
   // Roofit variables that we need
@@ -23,6 +25,7 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
   RooRealVar data("data", "data", -1, 2);
   RooRealVar qcd("qcd", "qcd", -1, 2);
   RooRealVar isPositive("isPositive", "isPositive", -1, 2);
+  //RooFormulaVar wNegative("weights","weights","-1*2231.8*@0/2093.37", RooArgList(weights) ) ;
   RooFormulaVar wNegative("weights","weights","-1*@0", RooArgList(weights) ) ;
 
   // Define cut sequence
@@ -97,8 +100,8 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
 
   RooRealVar NnQCD("NonQCD Events","NnQCD",NonQCDExprected,min_nqcd,max_nqcd);
   RooRealVar NQCD("QCD Events","NQCD",NQCDExprected,min_qcd,max_qcd);
-  RooRealVar F("F","F",0.5,0,1);
-  RooRealVar N("N","N",50000,0,100000);
+  //RooRealVar F("F","F",0.5,0,1);
+  //RooRealVar N("N","N",50000,0,100000);
 
   // Objecrts for plotting 
   gStyle->SetTitleX(0.23);
@@ -155,7 +158,7 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
   RooAddPdf model("model","model",RooArgList(QCD_PDF,NonQCD_PDF),RooArgList(NQCD, NnQCD));
   // RooExtendPdf ext("ext","ext", model,N);
   // Minimize likelihood w.r.t all parameters before making plots
-  RooFitResult* res = model.fitTo(*binnedDataLessIsolated,Extended(kTRUE),RooFit::Save(kTRUE), SumW2Error(kTRUE));
+  RooFitResult* res = model.fitTo(*binnedDataLessIsolated,Extended(kTRUE),RooFit::Save(kTRUE), SumW2Error(kTRUE)) ; // , Range(0.,50.));
 
   // Plot result
   model.plotOn(frame,Name("Fit")); 
@@ -215,16 +218,18 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
   RooAbsArg* aptr = model.pdfList().find("QCD_PDF");
   TIterator * itPdf = model.pdfList().createIterator();
   TIterator * itCoef = model.coefList().createIterator();
+
+  mtw.setRange("cut", 50., 200.); // Extrapolate in >50 region
   for(int ii =0; ii < model.pdfList().getSize(); ii++)
     {
       RooAbsReal * argP = (RooAbsReal*)itPdf->Next();
       RooAbsReal * argC = (RooAbsReal*)itCoef->Next();
       std::cout << "Parameter "<<argC->GetName() << " has a best fit value of "<< argC->getVal() << " in the whole MTW region ";
 
-      mtw.setRange("cut", 50., 200.); // Extrapolate in >50 region
+      
       RooAbsReal *sig = argP->createIntegral(mtw, NormSet(mtw), Range("cut"));
       double IntegralValue = sig->getVal();
-      std::cout << "and after extapolating to >50 region: "<< argC->getVal()*IntegralValue << std::endl;
+      std::cout << IntegralValue << " and after extapolating to >50 region: "<< argC->getVal()*IntegralValue << std::endl;
 
       sprintf( buf,  "N_{%s}^{mtw>50} = %.2f", argC->GetName() , argC->getVal()*IntegralValue );
       if( pasformat == 0 )
@@ -238,9 +243,9 @@ void mtwFit(TString filename, TString channel , int charge = 0, const int nBinsM
     
   TLatex *   tex ;
   if(pasformat == 1)
-    tex = new TLatex(0.91,0.92,"2.3 fb^{-1} (13 TeV)");
+    tex = new TLatex(0.91,0.92,"2.2 fb^{-1} (13 TeV)");
   else
-    tex = new TLatex(0.91,0.95,"2.3 fb^{-1} (13 TeV)");
+    tex = new TLatex(0.91,0.95,"2.2 fb^{-1} (13 TeV)");
   tex->SetNDC();
   tex->SetTextAlign(31);
   tex->SetTextFont(42);

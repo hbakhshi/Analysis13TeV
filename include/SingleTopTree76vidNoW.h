@@ -30,6 +30,7 @@ public :
   vector<int> Tight12IsoMuons;
   vector<int> LooseMuonsQCD;
   vector<int> LooseMuonsSignal;
+  vector<int> LooseMuonsIntermediate;
   vector<int> VetoElectrons;
   vector<int> Jets;
   vector<int> bJets;

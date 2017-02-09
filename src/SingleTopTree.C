@@ -47,27 +47,28 @@ void SingleTopTree::FillMuons(){
   Tight12IsoMuons.clear();
   LooseMuonsQCD.clear();
   LooseMuonsSignal.clear();
-
-
+  LooseMuonsIntermediate.clear();
 
   for( int imu=0 ; imu < muons_size ; imu++ ){
     
     bool isSignal = false;
     bool isQCD = false;
+    bool isIntermediate = false;
     if( muons_Pt[imu] > 22.0 &&
-	fabs(muons_Eta[imu]) < 2.4 &&
+	fabs(muons_Eta[imu]) < 2.1 &&
 	muons_IsTightMuon[imu] > 0.5 ){
       
       if( muons_Iso04[imu] < 0.06 ){ 
 	TightIso06Muons.push_back( imu );
 	isSignal = true;
       }
-      if( muons_Iso04[imu] > 0.12 ){
+      else if( muons_Iso04[imu] > 0.12 ){
 	Tight12IsoMuons.push_back( imu );
 	isQCD = true;
       }
-      if( muons_Iso04[imu] < 0.12 ){
+      else{
 	TightIso12Muons.push_back( imu );
+	isIntermediate = true;
       }
     }
 
@@ -79,6 +80,8 @@ void SingleTopTree::FillMuons(){
 	LooseMuonsQCD.push_back( imu );
       if( !isSignal )
 	LooseMuonsSignal.push_back( imu );
+      if( !isIntermediate )
+	LooseMuonsIntermediate.push_back(imu);
     }
   }      
 }
@@ -109,6 +112,11 @@ void SingleTopTree::FillJets(){
     mu = Tight12IsoMuons.size() > 0 ;
     if( mu )
       tightMuIndex = Tight12IsoMuons[0] ;
+  }
+  if(!mu){
+    mu = TightIso12Muons.size() > 0 ;
+    if( mu )
+      tightMuIndex = TightIso12Muons[0] ;
   }
   muon.SetPtEtaPhiE( muons_Pt[tightMuIndex] , muons_Eta[tightMuIndex] , muons_Phi[tightMuIndex] , muons_E[tightMuIndex] );
 

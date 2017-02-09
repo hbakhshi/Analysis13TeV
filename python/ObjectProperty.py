@@ -3,8 +3,8 @@ import re
 from math import sqrt
 
 def correctforlumi( val,err ):
-    val *= (2290.0/2246.0)
-    err *= (2290.0/2246.0)
+    # val *= (2290.0/2246.0)
+    # err *= (2290.0/2246.0)
     return (val ,err)
 
 class ObjectProperty:
@@ -78,6 +78,7 @@ class ObjectProperty:
 
             format1 = "{0:.2f}+-{1:.2f}"
             format2 = "{0:.2f}"
+            #format1 = format2
 
             line = " | " + cutName + " | " + self.GetFormattedBinContent( "Signal" , bin , format1 ) + " | "
             for bkg in self.BKGs :
@@ -270,21 +271,16 @@ def TChannel_JPCSV():
 
 
 def TChannel_CutFlow():
-    f = TFile.Open("../TChFARM_V4/outputs/TChannel_V4.root")
-    #dir = f.GetDirectory("iso2j1t/cft") 
-    dir = f.GetDirectory("iso2j1t/muCharge") 
-    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P" , "QCD1"  ] )
-    # cutflowtable.Data.SetBinContent(1, 334639)
-    # cutflowtable.Data.SetBinContent(2, 11537)
-    # cutflowtable.Data.SetBinContent(3, 583)
-    # cutflowtable.Data.SetBinContent(4, 376)
-    # cutflowtable.Data.SetBinContent(5, 231)
+    f = TFile.Open("../cp3_condor/TChFARM_V4/outputs/TChannel_V4.root")
+    dir = f.GetDirectory("iso2j1t/cft") 
+    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P" , "QCD"  ] )
     cutflowtable.PrintCutFlowTable()
 
 def TChannel_CutFlowW1():
-    dirw1 = f.GetDirectory("cutflowtablew1") 
-    cutflowtablew1 = ObjectProperty( dirw1 , "tChannel" , ["SUSY"] )
-    cutflowtablew1.PrintCutFlowTable()
+    f = TFile.Open("../cp3_condor/TChFARM_V4/outputs/TChannel_V4.root")
+    dir = f.GetDirectory("iso2j1t/cft_w1") 
+    cutflowtable = ObjectProperty( dir , "TChannel" , ["SUSY" , "TChannel_N" , "TChannel_P" , "VJets_N" , "VJets_P" , "QCD"  ] )
+    cutflowtable.PrintCutFlowTable()
 
 
 def TChannel_Plotter():

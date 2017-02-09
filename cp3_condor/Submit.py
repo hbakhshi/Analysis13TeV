@@ -8,13 +8,13 @@ import glob
 
 
 
-cpVersion = "V4"
+cpVersion = "V7"
 FarmDirectory = "TChFARM_"+cpVersion
 JobName = "STFull_"+cpVersion
 
-samples = {'RunII_25ns':74024153 , 'Signal':29257464 , 'QCDMuEnriched':21708235 , 'WJets':47161328 , 'DYJets':28751199 , 'SingleTop_tW':1000000 , 'SingleTopbar_tW':999400 , 'TTJets':97994442 }
+samples = {'RunII_25ns':74024153 , 'Signal':29257464 , 'QCDMuEnriched':21708235 , 'WJets':47161328 , 'DYJets':28751199 , 'SingleTop_tW':1000000 , 'SingleTopbar_tW':999400 , 'TTJets':97994442 , 'WJets_amcatnlo':239170847 , 'WJets_mg_full':47161328 }
 
-nevents_perjob = 1000000
+nevents_perjob = 1200000
 total_nevents = 0
 for sample in samples:
     total_nevents += samples[sample]
@@ -40,6 +40,8 @@ command = 'cd .. ; source env.sh ; bin/RunAll -s samples25ns/samplesMine76x.dat 
 
 global_job_counter = 0
 for sample in samples:
+    if not sample == "WJets_amcatnlo" :
+        continue
     nevt = samples[sample]
     portions = []
     lasteventadded = 0.0

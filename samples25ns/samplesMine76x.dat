@@ -95,6 +95,35 @@ Color		417
 NEvents		47161328
 
 SAMPLE
+Name		WJets_mg_full
+SName		VJets
+ShapeName	WJets
+File            WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_full.list
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	0
+Xsection  	61526.7
+Kfact           1.
+Lumi            2290
+Type            mc
+Color		417
+NEvents		47161328
+
+SAMPLE
+Name		WJets_amcatnlo
+SName		VJets
+ShapeName	WJets
+File            WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_highstat.list
+TreeName	DMTreesDumper/ttDM__noSyst
+LHEWeight	1
+Xsection  	61526.7
+Kfact           1.
+Lumi            2290
+Type            mc
+Color		417
+NEvents		163605551
+
+
+SAMPLE
 Name		DYJets
 SName		VJets
 ShapeName	DY
